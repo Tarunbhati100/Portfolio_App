@@ -43,7 +43,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
               Text(
-                "A app where you can keep all your acheivements together",
+                "An app where you can keep all your acheivements together",
                 style: TextStyle(color: Colors.grey),
                 textAlign: TextAlign.center,
               ),

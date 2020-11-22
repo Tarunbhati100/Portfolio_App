@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "970252890832",
+    "firebase_url": "https://portfolio-2db19.firebaseio.com",
+    "project_id": "portfolio-2db19",
+    "storage_bucket": "portfolio-2db19.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:970252890832:android:2a7f20c4bfea8e86aa64d5",
+        "android_client_info": {
+          "package_name": "co.tarun_Bhati.Portfolio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "970252890832-3r74a96gl1j4c9tplq5m1b98f080runc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApfMRKiAe-YIgyIrM_xRc0pnYxMHYFcvs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "970252890832-3r74a96gl1j4c9tplq5m1b98f080runc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
