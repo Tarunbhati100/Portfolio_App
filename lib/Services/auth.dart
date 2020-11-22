@@ -18,11 +18,11 @@ class AuthServices {
     }
   }
 
-  Future registerWithEmailAndPassword(String email, String password,String codechef_handle,String codeforces_handle,String hackerRank_handle,String gitHub_handle) async {
+  Future registerWithEmailAndPassword(String email, String password,String username,String codechef_handle,String codeforces_handle,String hackerRank_handle,String gitHub_handle) async {
     try {
       final result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-          await DatabaseServices().updateUserData(result.user.uid, codechef_handle, codeforces_handle, hackerRank_handle, gitHub_handle);
+          await DatabaseServices().updateUserData(result.user.uid,username, codechef_handle, codeforces_handle, hackerRank_handle, gitHub_handle);
       return result;
     } catch (error) {
       print(error.toString());

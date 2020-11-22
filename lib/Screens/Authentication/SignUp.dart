@@ -1,4 +1,6 @@
+import 'package:Portfolio/Services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../Services/auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -17,6 +19,7 @@ class _SignUpState extends State<SignUp> {
   bool isloading = false;
   String emailid;
   String password;
+  String username;
   String codechef;
   String codeforces;
   String hackerrank;
@@ -141,6 +144,23 @@ class _SignUpState extends State<SignUp> {
                       TextFormField(
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
+                          hintText: "UserName",
+                          labelText: "UserName",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                        ),
+                        onChanged: (val) {
+                          username = val;
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
                           hintText: "Codechef Handle",
                           labelText: "Codechef Handle",
                           alignLabelWithHint: true,
@@ -220,6 +240,7 @@ class _SignUpState extends State<SignUp> {
                                   await _auth.registerWithEmailAndPassword(
                                       emailid,
                                       password,
+                                      username,
                                       codechef,
                                       codeforces,
                                       hackerrank,
