@@ -259,8 +259,10 @@ class _SignUpState extends State<SignUp> {
                             setState(() {
                               isloading = false;
                             });
-                            if(_error!=null){
-                              Scaffold.of(context).showSnackBar( SnackBar(content: Text(_error),));
+                            if (_error != null) {
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text(_error),
+                              ));
                             }
                           }
                         },
