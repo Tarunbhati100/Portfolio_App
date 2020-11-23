@@ -1,9 +1,10 @@
 import 'package:Portfolio/Screens/Authentication/SignUp.dart';
 import 'package:Portfolio/Screens/Authentication/signIn.dart';
+import 'package:Portfolio/Services/codeforces.dart';
+import 'package:Portfolio/modals/Codeforces.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-bool isNew;
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -11,6 +12,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+bool isNew;
   void toggleScreen() {
     setState(() {
       isNew = isNew == false ? true : false;
@@ -52,7 +54,7 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
               RaisedButton(
                 color: Colors.white,
-                onPressed: () {
+                onPressed: (){
                   setState(() {
                     isNew = false;
                   });

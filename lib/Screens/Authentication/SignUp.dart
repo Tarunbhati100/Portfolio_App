@@ -1,6 +1,5 @@
-import 'package:Portfolio/Services/database.dart';
+import 'package:Portfolio/Screens/HomeScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../Services/auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -24,6 +23,7 @@ class _SignUpState extends State<SignUp> {
   String codeforces;
   String hackerrank;
   String github;
+  String _error;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -246,15 +246,22 @@ class _SignUpState extends State<SignUp> {
                                       hackerrank,
                                       github);
                               if (newUser != null) {
-                                print(newUser);
+                                await _auth.signInWithEmailAndPassword(
+                                    emailid, password);
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) => HomeScreen()));
                               }
                             }
                           } catch (e) {
-                            print(e);
+                            _error = e.code;
                           } finally {
                             setState(() {
                               isloading = false;
                             });
+                            if(_error!=null){
+                              Scaffold.of(context).showSnackBar( SnackBar(content: Text(_error),));
+                            }
                           }
                         },
                         child: Text(

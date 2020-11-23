@@ -1,3 +1,4 @@
+import 'package:Portfolio/modals/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseServices {
@@ -26,7 +27,18 @@ class DatabaseServices {
     }).toList();
   }
 
-  Stream<List> get id {
+  Stream<List> get data {
     return portfolioCollection.snapshots().map(_snapshotList);
+  }
+
+  Future<User> getUser(String uid) async {
+    final doc = await portfolioCollection.doc(uid).get();
+    return User(
+        codeforces: doc.data()['Codeforces Handle'],
+        gitHub: doc.data()['GitHub Handle'],
+        userName: doc.data()['Username'],
+        codechef: doc.data()['Codechef Handle'],
+        hackerRank: doc.data()['HackerRank Handle'],
+      );
   }
 }
