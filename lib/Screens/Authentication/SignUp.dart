@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:Portfolio/Screens/HomeScreen.dart';
+import 'package:Portfolio/Services/storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../Services/auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -23,7 +27,9 @@ class _SignUpState extends State<SignUp> {
   String codeforces;
   String hackerrank;
   String github;
-  String _error;
+  String aboutMe;
+  String achievements;
+  PickedFile image;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +51,7 @@ class _SignUpState extends State<SignUp> {
           padding: EdgeInsets.all(30),
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
                   width: double.infinity,
@@ -68,6 +74,44 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   height: 20,
                 ),
+                InkWell(
+                  onTap: () async {
+                    image = await ImagePicker().getImage(
+                        source: ImageSource.gallery, imageQuality: 50);
+                    setState(() {});
+                  },
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 100,
+                        backgroundColor: Colors.amber,
+                        child: image == null
+                            ? Icon(
+                                Icons.image,
+                                size: 100,
+                                color: Colors.black,
+                              )
+                            : ClipOval(
+                                child: Image.file(
+                                  File(image.path),
+                                  fit: BoxFit.fill,
+                                  width: 200,
+                                  height: 200,
+                                ),
+                              ),
+                      ),
+                      Positioned(
+                        child: Icon(
+                          Icons.edit,
+                          size: 40,
+                        ),
+                        left: 160,
+                        top: 160,
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
                 Form(
                   key: _formkey,
                   child: Column(
@@ -83,7 +127,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         onChanged: (email) {
-                          emailid = email;
+                          emailid = email.toLowerCase();
                         },
                         validator: (val) {
                           if (val == null || val == "") {
@@ -142,6 +186,52 @@ class _SignUpState extends State<SignUp> {
                         height: 10,
                       ),
                       TextFormField(
+                        maxLines: 8,
+                        maxLength: 1000,
+                        decoration: InputDecoration(
+                          hintText:
+                              "About Yourself.",
+                          labelText: "About Yourself",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            borderSide: BorderSide(
+                                color: Colors.teal,
+                                style: BorderStyle.solid,
+                                width: 2),
+                          ),
+                        ),
+                        onChanged: (text) {
+                          aboutMe = text;
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        maxLines: 8,
+                        maxLength: 1000,
+                        decoration: InputDecoration(
+                          hintText:
+                              "Your Acheivements. Please provide in points to make it look good",
+                          labelText: "Your Achievements",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            borderSide: BorderSide(
+                                color: Colors.teal,
+                                style: BorderStyle.solid,
+                                width: 2),
+                          ),
+                        ),
+                        onChanged: (text) {
+                          achievements = text;
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           hintText: "UserName",
@@ -151,8 +241,14 @@ class _SignUpState extends State<SignUp> {
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                         ),
+                        validator: (val) {
+                          if (val == null) {
+                            return "Please provide a valid Username.";
+                          }
+                          return null;
+                        },
                         onChanged: (val) {
-                          username = val;
+                          username = val.toLowerCase();
                         },
                       ),
                       SizedBox(
@@ -238,13 +334,16 @@ class _SignUpState extends State<SignUp> {
                             if (_formkey.currentState.validate()) {
                               final newUser =
                                   await _auth.registerWithEmailAndPassword(
-                                      emailid,
-                                      password,
-                                      username,
-                                      codechef,
-                                      codeforces,
-                                      hackerrank,
-                                      github);
+                                      email: emailid,
+                                      password: password,
+                                      username: username,
+                                      codechef_handle: codechef,
+                                      codeforces_handle: codeforces,
+                                      hackerRank_handle: hackerrank,
+                                      gitHub_handle: github,
+                                      dp: File(image.path),
+                                      aboutme: aboutMe,
+                                      achievements: achievements);
                               if (newUser != null) {
                                 await _auth.signInWithEmailAndPassword(
                                     emailid, password);
@@ -254,16 +353,11 @@ class _SignUpState extends State<SignUp> {
                               }
                             }
                           } catch (e) {
-                            _error = e.code;
+                            print(e);
                           } finally {
                             setState(() {
                               isloading = false;
                             });
-                            if (_error != null) {
-                              Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text(_error),
-                              ));
-                            }
                           }
                         },
                         child: Text(

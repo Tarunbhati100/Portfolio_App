@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:Portfolio/Services/storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'database.dart';
+
 class AuthServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -18,11 +22,32 @@ class AuthServices {
     }
   }
 
-  Future registerWithEmailAndPassword(String email, String password,String username,String codechef_handle,String codeforces_handle,String hackerRank_handle,String gitHub_handle) async {
+  Future registerWithEmailAndPassword({
+    File dp,
+    String email,
+    String password,
+    String username,
+    String codechef_handle,
+    String codeforces_handle,
+    String hackerRank_handle,
+    String gitHub_handle,
+    String aboutme,
+    String achievements,
+  }) async {
     try {
       final result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-          await DatabaseServices().updateUserData(result.user.uid,username, codechef_handle, codeforces_handle, hackerRank_handle, gitHub_handle);
+      final dpurl = await StorageRepo().uploadFile(dp);
+      await DatabaseServices().updateUserData(
+          id: result.user.uid,
+          username: username,
+          codechef_handle: codechef_handle,
+          codeforces_handle: codeforces_handle,
+          hackerRank_handle: hackerRank_handle,
+          gitHub_handle: gitHub_handle,
+          dpurl: dpurl,
+          aboutme: aboutme,
+          achievements: achievements);
       return result;
     } catch (error) {
       print(error.toString());
