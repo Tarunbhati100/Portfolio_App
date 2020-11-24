@@ -1,25 +1,36 @@
 import 'dart:io';
 import 'package:Portfolio/Screens/HomeScreen.dart';
+import 'package:Portfolio/Services/database.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../Services/auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
-class SignUp extends StatefulWidget {
-  Function toggleCallback;
-  Function backCallback;
-  SignUp({this.toggleCallback, this.backCallback});
-
+class EditScreen extends StatefulWidget {
   @override
-  _SignUpState createState() => _SignUpState();
+  _EditScreenState createState() => _EditScreenState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _EditScreenState extends State<EditScreen> {
   final _auth = AuthServices();
+  final _database = DatabaseServices();
+  void initialize() async {
+    final user = await _database.getUser(_auth.getCurrentUser().uid);
+    username = user.userName;
+    aboutMe = user.aboutme;
+    achievements = user.achievements;
+    codechef = user.codechef;
+    codeforces = user.codeforces;
+    github = user.gitHub;
+    hackerrank = user.hackerRank;
+    dpurl = user.dpUrl;
+    setState(() {});
+  }
+
   final _formkey = GlobalKey<FormState>();
   bool isloading = false;
-  String emailid;
-  String password;
+  String dpurl;
   String username;
   String codechef;
   String codeforces;
@@ -30,19 +41,8 @@ class _SignUpState extends State<SignUp> {
   PickedFile image;
   @override
   Widget build(BuildContext context) {
+    initialize();
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        brightness: Brightness.light,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black,
-          ),
-          onPressed: widget.backCallback,
-        ),
-      ),
       body: ModalProgressHUD(
         inAsyncCall: isloading,
         child: Container(
@@ -56,12 +56,12 @@ class _SignUpState extends State<SignUp> {
                   child: Column(
                     children: [
                       Text(
-                        "Sign Up",
+                        "Edit Data",
                         style: TextStyle(
                             fontSize: 50, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "Create an account. It's free",
+                        "Edit Your Profile",
                         style: TextStyle(
                           color: Colors.grey,
                         ),
@@ -84,17 +84,34 @@ class _SignUpState extends State<SignUp> {
                         radius: 100,
                         backgroundColor: Colors.amber,
                         child: image == null
-                            ? Icon(
-                                Icons.image,
-                                size: 100,
-                                color: Colors.black,
+                            ? CircleAvatar(
+                                radius: 105,
+                                backgroundColor: Colors.blueGrey,
+                                child: ClipOval(
+                                  child: CachedNetworkImage(
+                                    fit: BoxFit.fill,
+                                    height: 200,
+                                    width: 200,
+                                    imageUrl: dpurl,
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(
+                                      backgroundColor: Colors.white,
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  ),
+                                ),
                               )
-                            : ClipOval(
-                                child: Image.file(
-                                  File(image.path),
-                                  fit: BoxFit.fill,
-                                  width: 200,
-                                  height: 200,
+                            : CircleAvatar(
+                                radius: 105,
+                                backgroundColor: Colors.blueGrey,
+                                child: ClipOval(
+                                  child: Image.file(
+                                    File(image.path),
+                                    fit: BoxFit.fill,
+                                    width: 200,
+                                    height: 200,
+                                  ),
                                 ),
                               ),
                       ),
@@ -115,80 +132,11 @@ class _SignUpState extends State<SignUp> {
                   child: Column(
                     children: [
                       TextFormField(
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          hintText: "Email",
-                          labelText: "Email",
-                          alignLabelWithHint: true,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                        ),
-                        onChanged: (email) {
-                          emailid = email.toLowerCase();
-                        },
-                        validator: (val) {
-                          if (val == null || val == "") {
-                            return "Please Provide Valid email";
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextFormField(
-                        keyboardType: TextInputType.visiblePassword,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: "Password",
-                          labelText: "Password",
-                          alignLabelWithHint: true,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                        ),
-                        onChanged: (pass) {
-                          password = pass;
-                        },
-                        validator: (val) {
-                          if (val.length < 6) {
-                            return "Password must contain atleast 6 characters.";
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextFormField(
-                        keyboardType: TextInputType.visiblePassword,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: "Confirm Password",
-                          labelText: "Confirm Password",
-                          alignLabelWithHint: true,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                        ),
-                        onChanged: null,
-                        validator: (val) {
-                          if (val != password) {
-                            return "Passwords don't match";
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextFormField(
+                        initialValue: aboutMe,
                         maxLines: 8,
                         maxLength: 1000,
                         decoration: InputDecoration(
-                          hintText:
-                              "About Yourself.",
+                          hintText: "About Yourself.",
                           labelText: "About Yourself",
                           alignLabelWithHint: true,
                           border: OutlineInputBorder(
@@ -207,6 +155,7 @@ class _SignUpState extends State<SignUp> {
                         height: 10,
                       ),
                       TextFormField(
+                        initialValue: achievements,
                         maxLines: 8,
                         maxLength: 1000,
                         decoration: InputDecoration(
@@ -230,7 +179,7 @@ class _SignUpState extends State<SignUp> {
                         height: 10,
                       ),
                       TextFormField(
-                        keyboardType: TextInputType.emailAddress,
+                        initialValue: username,
                         decoration: InputDecoration(
                           hintText: "UserName",
                           labelText: "UserName",
@@ -253,7 +202,7 @@ class _SignUpState extends State<SignUp> {
                         height: 10,
                       ),
                       TextFormField(
-                        keyboardType: TextInputType.emailAddress,
+                        initialValue: codechef,
                         decoration: InputDecoration(
                           hintText: "Codechef Handle",
                           labelText: "Codechef Handle",
@@ -270,7 +219,7 @@ class _SignUpState extends State<SignUp> {
                         height: 10,
                       ),
                       TextFormField(
-                        keyboardType: TextInputType.emailAddress,
+                        initialValue: codeforces,
                         decoration: InputDecoration(
                           hintText: "Codeforces Handle",
                           labelText: "Codeforces Handle",
@@ -287,7 +236,7 @@ class _SignUpState extends State<SignUp> {
                         height: 10,
                       ),
                       TextFormField(
-                        keyboardType: TextInputType.emailAddress,
+                        initialValue: hackerrank,
                         decoration: InputDecoration(
                           hintText: "HakerRank Handle",
                           labelText: "HackerRank Handle",
@@ -304,7 +253,7 @@ class _SignUpState extends State<SignUp> {
                         height: 10,
                       ),
                       TextFormField(
-                        keyboardType: TextInputType.emailAddress,
+                        initialValue: github,
                         decoration: InputDecoration(
                           hintText: "GitHub Handle",
                           labelText: "GitHub Handle",
@@ -330,25 +279,19 @@ class _SignUpState extends State<SignUp> {
                           });
                           try {
                             if (_formkey.currentState.validate()) {
-                              final newUser =
-                                  await _auth.registerWithEmailAndPassword(
-                                      email: emailid,
-                                      password: password,
-                                      username: username,
-                                      codechef_handle: codechef,
-                                      codeforces_handle: codeforces,
-                                      hackerRank_handle: hackerrank,
-                                      gitHub_handle: github,
-                                      dp: File(image.path),
-                                      aboutme: aboutMe,
-                                      achievements: achievements);
-                              if (newUser != null) {
-                                await _auth.signInWithEmailAndPassword(
-                                    emailid, password);
-                                Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (context) => HomeScreen()));
-                              }
+                              await _database.updateUserData(
+                                  id: _auth.getCurrentUser().uid,
+                                  username: username,
+                                  codechef_handle: codechef,
+                                  codeforces_handle: codeforces,
+                                  hackerRank_handle: hackerrank,
+                                  gitHub_handle: github,
+                                  dp: File(image.path),
+                                  aboutme: aboutMe,
+                                  achievements: achievements);
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => HomeScreen()));
                             }
                           } catch (e) {
                             print(e);
@@ -359,29 +302,12 @@ class _SignUpState extends State<SignUp> {
                           }
                         },
                         child: Text(
-                          "Sign Up",
+                          "Submit",
                           style: TextStyle(fontSize: 50),
                         ),
                       ),
                     ],
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      "Already have an Account? | ",
-                      textAlign: TextAlign.end,
-                    ),
-                    FlatButton(
-                        onPressed: widget.toggleCallback,
-                        child: Text(
-                          "Log In",
-                          style: TextStyle(
-                            color: Colors.blue,
-                          ),
-                        ))
-                  ],
                 ),
               ],
             ),

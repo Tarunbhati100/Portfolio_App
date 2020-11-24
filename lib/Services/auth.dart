@@ -37,7 +37,6 @@ class AuthServices {
     try {
       final result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      final dpurl = await StorageRepo().uploadFile(dp);
       await DatabaseServices().updateUserData(
           id: result.user.uid,
           username: username,
@@ -45,7 +44,7 @@ class AuthServices {
           codeforces_handle: codeforces_handle,
           hackerRank_handle: hackerRank_handle,
           gitHub_handle: gitHub_handle,
-          dpurl: dpurl,
+          dp: dp,
           aboutme: aboutme,
           achievements: achievements);
       return result;

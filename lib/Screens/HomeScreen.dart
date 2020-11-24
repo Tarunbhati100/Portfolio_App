@@ -1,4 +1,5 @@
 import 'package:Portfolio/Screens/Authentication/AuthScreen.dart';
+import 'package:Portfolio/Screens/Authentication/EditScreen.dart';
 import 'package:Portfolio/Services/auth.dart';
 import 'package:Portfolio/Services/database.dart';
 import 'package:Portfolio/Services/github.dart';
@@ -72,10 +73,13 @@ class _HomeScreenState extends State<HomeScreen> {
         leading: IconButton(
           iconSize: 50,
           icon: Icon(
-            Icons.notes,
+            Icons.edit,
             color: Colors.yellow,
           ),
-          onPressed: null,
+          onPressed: () {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => EditScreen()));
+          },
         ),
         title: Text(
           "PORTFOLIO",

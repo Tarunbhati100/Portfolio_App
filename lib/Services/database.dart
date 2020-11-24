@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:Portfolio/Services/storage.dart';
 import 'package:Portfolio/modals/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -8,7 +11,7 @@ class DatabaseServices {
   Future<void> updateUserData({
     String id,
     String username,
-    String dpurl,
+    File dp,
     String codechef_handle,
     String codeforces_handle,
     String hackerRank_handle,
@@ -16,6 +19,7 @@ class DatabaseServices {
     String aboutme,
     String achievements,
   }) async {
+    final dpurl = await StorageRepo().uploadFile(dp);  
     return await portfolioCollection.doc(id).set({
       'Username': username ?? "",
       'Codechef Handle': codechef_handle ?? "",
