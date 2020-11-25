@@ -1,6 +1,4 @@
-import 'package:Portfolio/Screens/Authentication/AuthScreen.dart';
 import 'package:Portfolio/Services/auth.dart';
-import 'package:Portfolio/Services/database.dart';
 import 'package:Portfolio/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';

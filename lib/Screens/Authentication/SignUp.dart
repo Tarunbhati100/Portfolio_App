@@ -6,8 +6,8 @@ import '../../Services/auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class SignUp extends StatefulWidget {
-  Function toggleCallback;
-  Function backCallback;
+  final Function toggleCallback;
+  final Function backCallback;
   SignUp({this.toggleCallback, this.backCallback});
 
   @override
@@ -18,6 +18,8 @@ class _SignUpState extends State<SignUp> {
   final _auth = AuthServices();
   final _formkey = GlobalKey<FormState>();
   bool isloading = false;
+  bool _showPassword = false;
+  bool _showConfirmPassword = false;
   String emailid;
   String password;
   String username;
@@ -139,13 +141,23 @@ class _SignUpState extends State<SignUp> {
                       ),
                       TextFormField(
                         keyboardType: TextInputType.visiblePassword,
-                        obscureText: true,
+                        obscureText: !_showPassword,
                         decoration: InputDecoration(
                           hintText: "Password",
                           labelText: "Password",
                           alignLabelWithHint: true,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: _showPassword
+                                ? Icon(Icons.remove_red_eye)
+                                : Icon(Icons.remove_red_eye_outlined),
+                            onPressed: () {
+                              setState(() {
+                                _showPassword = !_showPassword;
+                              });
+                            },
                           ),
                         ),
                         onChanged: (pass) {
@@ -163,13 +175,23 @@ class _SignUpState extends State<SignUp> {
                       ),
                       TextFormField(
                         keyboardType: TextInputType.visiblePassword,
-                        obscureText: true,
+                        obscureText: !_showConfirmPassword,
                         decoration: InputDecoration(
                           hintText: "Confirm Password",
                           labelText: "Confirm Password",
                           alignLabelWithHint: true,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: _showConfirmPassword
+                                ? Icon(Icons.remove_red_eye)
+                                : Icon(Icons.remove_red_eye_outlined),
+                            onPressed: () {
+                              setState(() {
+                                _showConfirmPassword = !_showConfirmPassword;
+                              });
+                            },
                           ),
                         ),
                         onChanged: null,
@@ -187,8 +209,7 @@ class _SignUpState extends State<SignUp> {
                         maxLines: 8,
                         maxLength: 1000,
                         decoration: InputDecoration(
-                          hintText:
-                              "About Yourself.",
+                          hintText: "About Yourself.",
                           labelText: "About Yourself",
                           alignLabelWithHint: true,
                           border: OutlineInputBorder(
@@ -240,7 +261,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         validator: (val) {
-                          if (val == null) {
+                          if (val == "") {
                             return "Please provide a valid Username.";
                           }
                           return null;
@@ -339,7 +360,9 @@ class _SignUpState extends State<SignUp> {
                                       codeforces_handle: codeforces,
                                       hackerRank_handle: hackerrank,
                                       gitHub_handle: github,
-                                      dp: File(image.path),
+                                      dp: image != null
+                                          ? File(image.path)
+                                          : null,
                                       aboutme: aboutMe,
                                       achievements: achievements);
                               if (newUser != null) {

@@ -1,10 +1,12 @@
 import 'package:Portfolio/Screens/Authentication/AuthScreen.dart';
-import 'package:Portfolio/Screens/Authentication/EditScreen.dart';
+import 'package:Portfolio/Screens/EditScreen.dart';
 import 'package:Portfolio/Services/auth.dart';
+import 'package:Portfolio/Services/codechef.dart';
 import 'package:Portfolio/Services/database.dart';
 import 'package:Portfolio/Services/github.dart';
 import 'package:Portfolio/modals/Codeforces.dart';
 import 'package:Portfolio/modals/GitHub.dart';
+import 'package:Portfolio/modals/codechef.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -27,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   GitHub gitHub;
   bool isloading = true;
 
-  Response codechefresponse;
+  Codechef codechef;
   Response hackerrankresponse;
   void initializeUser() async {
     user = await _database.getUser(_auth.getCurrentUser().uid);
@@ -36,8 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (user.gitHub != null && user.gitHub != "")
       gitHub = await GitHubServices(handle: user.gitHub).getInfo();
     if (user.codechef != null && user.codechef != "")
-      codechefresponse =
-          await get("https://www.codechef.com/users/" + user.codechef);
+      codechef = await CodechefServices(handle: user.codechef).getInfo();
     if (user.hackerRank != null && user.hackerRank != "")
       hackerrankresponse =
           await get("https://www.hackerrank.com/" + user.hackerRank);
@@ -45,6 +46,18 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isloading = false;
     });
+  }
+
+  List<Widget> buildStars(int count, Color color) {
+    List<Icon> stars = [];
+    for (int i = 0; i < count; i++) {
+      stars.add(Icon(
+        Icons.star_border,
+        color: color,
+        size: 30,
+      ));
+    }
+    return stars;
   }
 
   bool check(Response data) {
@@ -77,8 +90,18 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.yellow,
           ),
           onPressed: () {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => EditScreen()));
+            CodechefServices(handle: user.codechef).getInfo();
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EditScreen(
+                      username: user.userName,
+                      hackerrank: user.hackerRank,
+                      github: user.gitHub,
+                      achievements: user.achievements,
+                      codeforces: user.codeforces,
+                      codechef: user.codechef,
+                      aboutMe: user.aboutme,
+                      dpurl: user.dpUrl,
+                    )));
           },
         ),
         title: Text(
@@ -356,17 +379,62 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                           ),
-                    check(codechefresponse)
+                    codechef != null
                         ? InkWell(
                             child: Card(
-                                child: Column(
+                                child: Row(
                               children: [
-                                Image.asset("./assets/codechef.png"),
-                                Text(
-                                  "CodeChef Link : https://www.codechef.com/users/" +
-                                      user.codechef,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                Flexible(
+                                  flex: 3,
+                                  child: Column(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text(
+                                            "Codechef Handle : ",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                          FittedBox(
+                                              child: Text(
+                                            codechef.handle,
+                                            style: TextStyle(fontSize: 60),
+                                          )),
+                                        ],
+                                      ),
+                                      FittedBox(
+                                        child: Row(
+                                          children: buildStars(codechef.stars,
+                                                  codechef.color) ??
+                                              [],
+                                        ),
+                                      ),
+                                      Text(
+                                        "Current Rating : " +
+                                            codechef.rating.toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        "Max. Rating : " +
+                                            codechef.maxrating.toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Flexible(
+                                  flex: 2,
+                                  child: CachedNetworkImage(
+                                    height: 150,
+                                    imageUrl: codechef.url,
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
                                   ),
                                 ),
                               ],

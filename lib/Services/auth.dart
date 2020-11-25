@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:Portfolio/Services/storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'database.dart';
 

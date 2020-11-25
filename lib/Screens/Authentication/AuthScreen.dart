@@ -1,7 +1,5 @@
 import 'package:Portfolio/Screens/Authentication/SignUp.dart';
 import 'package:Portfolio/Screens/Authentication/signIn.dart';
-import 'package:Portfolio/Services/codeforces.dart';
-import 'package:Portfolio/modals/Codeforces.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

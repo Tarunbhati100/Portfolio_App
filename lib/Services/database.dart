@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:Portfolio/Services/storage.dart';
 import 'package:Portfolio/modals/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,17 +17,18 @@ class DatabaseServices {
     String gitHub_handle,
     String aboutme,
     String achievements,
+    String dpUrl,
   }) async {
-    final dpurl = await StorageRepo().uploadFile(dp);  
+      final dpurl = (dp != null)?await StorageRepo().uploadFile(dp):dpUrl;
     return await portfolioCollection.doc(id).set({
       'Username': username ?? "",
       'Codechef Handle': codechef_handle ?? "",
       'Codeforces Handle': codeforces_handle ?? "",
       'HackerRank Handle': hackerRank_handle ?? "",
       'GitHub Handle': gitHub_handle ?? "",
-      'dpurl': dpurl,
-      'About Me': aboutme,
-      'Achievements': achievements,
+      'dpurl': dpurl??"",
+      'About Me': aboutme??"",
+      'Achievements': achievements??"",
     });
   }
 

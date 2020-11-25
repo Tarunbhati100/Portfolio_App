@@ -1,35 +1,13 @@
 import 'dart:io';
-import 'package:Portfolio/Screens/HomeScreen.dart';
 import 'package:Portfolio/Services/database.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../Services/auth.dart';
+import '../Services/auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import './HomeScreen.dart';
 
 class EditScreen extends StatefulWidget {
-  @override
-  _EditScreenState createState() => _EditScreenState();
-}
-
-class _EditScreenState extends State<EditScreen> {
-  final _auth = AuthServices();
-  final _database = DatabaseServices();
-  void initialize() async {
-    final user = await _database.getUser(_auth.getCurrentUser().uid);
-    username = user.userName;
-    aboutMe = user.aboutme;
-    achievements = user.achievements;
-    codechef = user.codechef;
-    codeforces = user.codeforces;
-    github = user.gitHub;
-    hackerrank = user.hackerRank;
-    dpurl = user.dpUrl;
-    setState(() {});
-  }
-
-  final _formkey = GlobalKey<FormState>();
-  bool isloading = false;
   String dpurl;
   String username;
   String codechef;
@@ -39,10 +17,41 @@ class _EditScreenState extends State<EditScreen> {
   String aboutMe;
   String achievements;
   PickedFile image;
+  EditScreen({
+    this.dpurl,
+    this.github,
+    this.hackerrank,
+    this.codeforces,
+    this.codechef,
+    this.username,
+    this.achievements,
+    this.aboutMe,
+  });
+  @override
+  _EditScreenState createState() => _EditScreenState();
+}
+
+class _EditScreenState extends State<EditScreen> {
+  final _auth = AuthServices();
+  final _database = DatabaseServices();
+
+  final _formkey = GlobalKey<FormState>();
+  bool isloading = false;
+
   @override
   Widget build(BuildContext context) {
-    initialize();
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => HomeScreen()));
+          },
+        ),
+      ),
       body: ModalProgressHUD(
         inAsyncCall: isloading,
         child: Container(
@@ -74,7 +83,7 @@ class _EditScreenState extends State<EditScreen> {
                 ),
                 InkWell(
                   onTap: () async {
-                    image = await ImagePicker().getImage(
+                    widget.image = await ImagePicker().getImage(
                         source: ImageSource.gallery, imageQuality: 50);
                     setState(() {});
                   },
@@ -83,23 +92,25 @@ class _EditScreenState extends State<EditScreen> {
                       CircleAvatar(
                         radius: 100,
                         backgroundColor: Colors.amber,
-                        child: image == null
+                        child: widget.image == null
                             ? CircleAvatar(
                                 radius: 105,
                                 backgroundColor: Colors.blueGrey,
                                 child: ClipOval(
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.fill,
-                                    height: 200,
-                                    width: 200,
-                                    imageUrl: dpurl,
-                                    placeholder: (context, url) =>
-                                        CircularProgressIndicator(
-                                      backgroundColor: Colors.white,
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
-                                  ),
+                                  child: widget.dpurl == null
+                                      ? SizedBox()
+                                      : CachedNetworkImage(
+                                          fit: BoxFit.fill,
+                                          height: 200,
+                                          width: 200,
+                                          imageUrl: widget.dpurl,
+                                          placeholder: (context, url) =>
+                                              CircularProgressIndicator(
+                                            backgroundColor: Colors.white,
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons.error),
+                                        ),
                                 ),
                               )
                             : CircleAvatar(
@@ -107,7 +118,7 @@ class _EditScreenState extends State<EditScreen> {
                                 backgroundColor: Colors.blueGrey,
                                 child: ClipOval(
                                   child: Image.file(
-                                    File(image.path),
+                                    File(widget.image.path),
                                     fit: BoxFit.fill,
                                     width: 200,
                                     height: 200,
@@ -132,7 +143,7 @@ class _EditScreenState extends State<EditScreen> {
                   child: Column(
                     children: [
                       TextFormField(
-                        initialValue: aboutMe,
+                        initialValue: widget.aboutMe,
                         maxLines: 8,
                         maxLength: 1000,
                         decoration: InputDecoration(
@@ -148,14 +159,14 @@ class _EditScreenState extends State<EditScreen> {
                           ),
                         ),
                         onChanged: (text) {
-                          aboutMe = text;
+                          widget.aboutMe = text;
                         },
                       ),
                       SizedBox(
                         height: 10,
                       ),
                       TextFormField(
-                        initialValue: achievements,
+                        initialValue: widget.achievements,
                         maxLines: 8,
                         maxLength: 1000,
                         decoration: InputDecoration(
@@ -172,14 +183,14 @@ class _EditScreenState extends State<EditScreen> {
                           ),
                         ),
                         onChanged: (text) {
-                          achievements = text;
+                          widget.achievements = text;
                         },
                       ),
                       SizedBox(
                         height: 10,
                       ),
                       TextFormField(
-                        initialValue: username,
+                        initialValue: widget.username,
                         decoration: InputDecoration(
                           hintText: "UserName",
                           labelText: "UserName",
@@ -195,14 +206,14 @@ class _EditScreenState extends State<EditScreen> {
                           return null;
                         },
                         onChanged: (val) {
-                          username = val.toLowerCase();
+                          widget.username = val.toLowerCase();
                         },
                       ),
                       SizedBox(
                         height: 10,
                       ),
                       TextFormField(
-                        initialValue: codechef,
+                        initialValue: widget.codechef,
                         decoration: InputDecoration(
                           hintText: "Codechef Handle",
                           labelText: "Codechef Handle",
@@ -212,14 +223,14 @@ class _EditScreenState extends State<EditScreen> {
                           ),
                         ),
                         onChanged: (val) {
-                          codechef = val;
+                          widget.codechef = val;
                         },
                       ),
                       SizedBox(
                         height: 10,
                       ),
                       TextFormField(
-                        initialValue: codeforces,
+                        initialValue: widget.codeforces,
                         decoration: InputDecoration(
                           hintText: "Codeforces Handle",
                           labelText: "Codeforces Handle",
@@ -229,14 +240,14 @@ class _EditScreenState extends State<EditScreen> {
                           ),
                         ),
                         onChanged: (val) {
-                          codeforces = val;
+                          widget.codeforces = val;
                         },
                       ),
                       SizedBox(
                         height: 10,
                       ),
                       TextFormField(
-                        initialValue: hackerrank,
+                        initialValue: widget.hackerrank,
                         decoration: InputDecoration(
                           hintText: "HakerRank Handle",
                           labelText: "HackerRank Handle",
@@ -246,14 +257,14 @@ class _EditScreenState extends State<EditScreen> {
                           ),
                         ),
                         onChanged: (val) {
-                          hackerrank = val;
+                          widget.hackerrank = val;
                         },
                       ),
                       SizedBox(
                         height: 10,
                       ),
                       TextFormField(
-                        initialValue: github,
+                        initialValue: widget.github,
                         decoration: InputDecoration(
                           hintText: "GitHub Handle",
                           labelText: "GitHub Handle",
@@ -263,7 +274,7 @@ class _EditScreenState extends State<EditScreen> {
                           ),
                         ),
                         onChanged: (val) {
-                          github = val;
+                          widget.github = val;
                         },
                       ),
                       SizedBox(
@@ -281,14 +292,17 @@ class _EditScreenState extends State<EditScreen> {
                             if (_formkey.currentState.validate()) {
                               await _database.updateUserData(
                                   id: _auth.getCurrentUser().uid,
-                                  username: username,
-                                  codechef_handle: codechef,
-                                  codeforces_handle: codeforces,
-                                  hackerRank_handle: hackerrank,
-                                  gitHub_handle: github,
-                                  dp: File(image.path),
-                                  aboutme: aboutMe,
-                                  achievements: achievements);
+                                  username: widget.username,
+                                  codechef_handle: widget.codechef,
+                                  codeforces_handle: widget.codeforces,
+                                  hackerRank_handle: widget.hackerrank,
+                                  gitHub_handle: widget.github,
+                                  dp: widget.image != null
+                                      ? File(widget.image.path)
+                                      : null,
+                                  aboutme: widget.aboutMe,
+                                  achievements: widget.achievements,
+                                  dpUrl: widget.dpurl);
                               Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                       builder: (context) => HomeScreen()));

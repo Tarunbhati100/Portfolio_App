@@ -5,8 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class SignIn extends StatefulWidget {
-  Function toggleCallback;
-  Function backCallback;
+  final Function toggleCallback;
+  final Function backCallback;
 
   SignIn({this.toggleCallback, this.backCallback});
 
@@ -15,6 +15,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  bool _showPassword = false;
   final _auth = AuthServices();
 
   String emailid;
@@ -27,7 +28,7 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return ModalProgressHUD(
       inAsyncCall: isloading,
-          child: Scaffold(
+      child: Scaffold(
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
@@ -43,7 +44,7 @@ class _SignInState extends State<SignIn> {
         body: Container(
           padding: EdgeInsets.all(30),
           child: SingleChildScrollView(
-                      child: Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
@@ -52,7 +53,8 @@ class _SignInState extends State<SignIn> {
                     children: [
                       Text(
                         "Login",
-                        style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 50, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         "Login to your account",
@@ -76,7 +78,7 @@ class _SignInState extends State<SignIn> {
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
                   ),
-                  onChanged: (val){
+                  onChanged: (val) {
                     emailid = val;
                   },
                 ),
@@ -85,7 +87,7 @@ class _SignInState extends State<SignIn> {
                 ),
                 TextFormField(
                   keyboardType: TextInputType.visiblePassword,
-                  obscureText: true,
+                  obscureText: !_showPassword,
                   decoration: InputDecoration(
                     hintText: "Password",
                     labelText: "Password",
@@ -93,32 +95,46 @@ class _SignInState extends State<SignIn> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
+                    suffixIcon: IconButton(
+                      icon: _showPassword
+                          ? Icon(Icons.remove_red_eye)
+                          : Icon(Icons.remove_red_eye_outlined),
+                      onPressed: () {
+                        setState(() {
+                          _showPassword = !_showPassword;
+                        });
+                      },
+                    ),
                   ),
-                  onChanged: (val){password = val;},
+                  onChanged: (val) {
+                    password = val;
+                  },
                 ),
                 SizedBox(
                   height: 10,
                 ),
                 RaisedButton(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                   color: Colors.yellow,
-                  onPressed: () async{
+                  onPressed: () async {
                     setState(() {
                       isloading = true;
                     });
-                    try{
-                    final newUser = await _auth.signInWithEmailAndPassword(emailid, password);
-                    if(newUser != null){
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>HomeScreen()));
-                    }
-                    }catch(e){
+                    try {
+                      final newUser = await _auth.signInWithEmailAndPassword(
+                          emailid, password);
+                      if (newUser != null) {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => HomeScreen()));
+                      }
+                    } catch (e) {
                       print(e);
-                    }finally{
+                    } finally {
                       setState(() {
                         isloading = false;
                       });
                     }
-                    
                   },
                   child: Text(
                     "Log In",
