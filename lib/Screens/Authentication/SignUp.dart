@@ -4,12 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../Services/auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'signIn.dart';
 
 class SignUp extends StatefulWidget {
-  final Function toggleCallback;
-  final Function backCallback;
-  SignUp({this.toggleCallback, this.backCallback});
-
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -42,7 +39,9 @@ class _SignUpState extends State<SignUp> {
             Icons.arrow_back_ios,
             color: Colors.black,
           ),
-          onPressed: widget.backCallback,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
       ),
       body: ModalProgressHUD(
@@ -397,7 +396,11 @@ class _SignUpState extends State<SignUp> {
                       textAlign: TextAlign.end,
                     ),
                     FlatButton(
-                        onPressed: widget.toggleCallback,
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (context) => SignIn()));
+                        },
                         child: Text(
                           "Log In",
                           style: TextStyle(

@@ -12,7 +12,6 @@ import 'package:Portfolio/modals/codechef.dart';
 import 'package:Portfolio/modals/hackerrank.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Services/codeforces.dart';
 import '../modals/User.dart';

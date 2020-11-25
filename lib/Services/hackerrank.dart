@@ -1,5 +1,4 @@
 import 'package:Portfolio/modals/Badge.dart';
-import 'package:Portfolio/modals/codechef.dart';
 import 'package:Portfolio/modals/hackerrank.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart';

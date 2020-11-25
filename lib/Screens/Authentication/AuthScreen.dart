@@ -10,22 +10,9 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-bool isNew;
-  void toggleScreen() {
-    setState(() {
-      isNew = isNew == false ? true : false;
-    });
-  }
-
-  void back() {
-    setState(() {
-      isNew = null;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    if (isNew == null) {
       return Scaffold(
         body: Container(
           padding: EdgeInsets.all(10),
@@ -53,9 +40,8 @@ bool isNew;
               RaisedButton(
                 color: Colors.white,
                 onPressed: (){
-                  setState(() {
-                    isNew = false;
-                  });
+                             Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => SignIn()));
                 },
                 child: Text(
                   "Login",
@@ -65,9 +51,8 @@ bool isNew;
               RaisedButton(
                 color: Colors.yellow,
                 onPressed: () {
-                  setState(() {
-                    isNew = true;
-                  });
+                             Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => SignUp()));
                 },
                 child: Text(
                   "Sign Up",
@@ -78,16 +63,5 @@ bool isNew;
           ),
         ),
       );
-    } else {
-      return isNew
-          ? SignUp(
-              toggleCallback: toggleScreen,
-              backCallback: back,
-            )
-          : SignIn(
-              toggleCallback: toggleScreen,
-              backCallback: back,
-            );
-    }
-  }
+    } 
 }
