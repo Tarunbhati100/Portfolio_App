@@ -4,9 +4,12 @@ import 'package:Portfolio/Services/auth.dart';
 import 'package:Portfolio/Services/codechef.dart';
 import 'package:Portfolio/Services/database.dart';
 import 'package:Portfolio/Services/github.dart';
+import 'package:Portfolio/Services/hackerrank.dart';
+import 'package:Portfolio/modals/Badge.dart';
 import 'package:Portfolio/modals/Codeforces.dart';
 import 'package:Portfolio/modals/GitHub.dart';
 import 'package:Portfolio/modals/codechef.dart';
+import 'package:Portfolio/modals/hackerrank.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -30,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isloading = true;
 
   Codechef codechef;
-  Response hackerrankresponse;
+  HackerRank hackerrank;
   void initializeUser() async {
     user = await _database.getUser(_auth.getCurrentUser().uid);
     if (user.codeforces != null && user.codeforces != "")
@@ -40,8 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (user.codechef != null && user.codechef != "")
       codechef = await CodechefServices(handle: user.codechef).getInfo();
     if (user.hackerRank != null && user.hackerRank != "")
-      hackerrankresponse =
-          await get("https://www.hackerrank.com/" + user.hackerRank);
+      hackerrank = await HackerRankServices(handle: user.hackerRank).getInfo();
 
     setState(() {
       isloading = false;
@@ -60,13 +62,26 @@ class _HomeScreenState extends State<HomeScreen> {
     return stars;
   }
 
-  bool check(Response data) {
-    if (data != null) {
-      if (data.statusCode == 200) {
-        return true;
-      }
+  List<Widget> badges(List<Badge> data) {
+    List<Widget> badges = [];
+    for (var i in data) {
+      badges.add(Container(
+        child: Row(mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FittedBox(
+                child: Text(
+              "${i.name} : ${i.star}",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            )),
+            Icon(
+              Icons.star,
+              color: Colors.amber,
+            )
+          ],
+        ),
+      ));
     }
-    return false;
+    return badges;
   }
 
   @override
@@ -90,7 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.yellow,
           ),
           onPressed: () {
-            CodechefServices(handle: user.codechef).getInfo();
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => EditScreen(
                       username: user.userName,
@@ -135,8 +149,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CircleAvatar(
-                      radius: 105,
-                      backgroundColor: Colors.blueGrey,
+                      radius: 103,
+                      backgroundColor: Colors.teal,
                       child: ClipOval(
                         child: CachedNetworkImage(
                           fit: BoxFit.fill,
@@ -430,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   flex: 2,
                                   child: CachedNetworkImage(
                                     height: 150,
-                                    imageUrl: codechef.url,
+                                    imageUrl: codechef.imageurl,
                                     placeholder: (context, url) =>
                                         CircularProgressIndicator(),
                                     errorWidget: (context, url, error) =>
@@ -444,22 +458,51 @@ class _HomeScreenState extends State<HomeScreen> {
                                     user.codechef),
                           )
                         : SizedBox(),
-                    check(hackerrankresponse)
+                    hackerrank != null
                         ? InkWell(
                             child: Card(
-                              child: Column(
-                                children: [
-                                  Image.asset("./assets/hackerrank.png"),
-                                  Text(
-                                    "HackerRank Link : https://www.hackerrank.com/" +
-                                        user.hackerRank,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                child: Row(
+                              children: [
+                                Flexible(
+                                  flex: 3,
+                                  child: Column(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text(
+                                            "HackerRank Handle : ",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                          FittedBox(
+                                              child: Text(
+                                            hackerrank.handle,
+                                            style: TextStyle(fontSize: 60),
+                                          )),
+                                        ],
+                                      ),
+                                      Column(
+                                        children:
+                                            badges(hackerrank.badges) ?? [],
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
+                                Flexible(
+                                  flex: 2,
+                                  child: CachedNetworkImage(
+                                    height: 150,
+                                    imageUrl: hackerrank.imageurl,
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  ),
+                                ),
+                              ],
+                            )),
                             onLongPress: () => launch(
                                 "https://www.hackerrank.com/" +
                                     user.hackerRank),

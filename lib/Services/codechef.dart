@@ -21,7 +21,7 @@ class CodechefServices {
           .attributes["src"];
       return Codechef(
           handle: handle,
-          url: "https://s3.amazonaws.com/codechef_shared" + url,
+          imageurl: "https://s3.amazonaws.com/codechef_shared" + url,
           rating: int.parse(currrating.substring(1,currrating.length-1)),
           maxrating: int.parse(maxrating.substring(16,maxrating.length-2)));
     } else {

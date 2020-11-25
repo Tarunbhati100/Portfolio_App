@@ -5,10 +5,10 @@ class Codechef {
   final String handle;
   final int rating;
   final int maxrating;
-  final String url;
+  final String imageurl;
   Color color;
   int stars;
-  Codechef({this.handle, this.rating, this.url,this.maxrating}) {
+  Codechef({this.handle, this.rating, this.imageurl,this.maxrating}) {
     if (rating < 1400) {
       stars = 1;
       color = Colors.grey;
