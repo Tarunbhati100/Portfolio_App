@@ -11,12 +11,15 @@ import 'package:Portfolio/modals/GitHub.dart';
 import 'package:Portfolio/modals/codechef.dart';
 import 'package:Portfolio/modals/hackerrank.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Services/codeforces.dart';
 import '../modals/User.dart';
 
 class HomeScreen extends StatefulWidget {
+  User user;
+  HomeScreen({this.user});
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -27,22 +30,25 @@ class _HomeScreenState extends State<HomeScreen> {
   final _database = DatabaseServices();
 
   Codeforces codeforces;
-  User user;
   GitHub gitHub;
   bool isloading = true;
-
   Codechef codechef;
   HackerRank hackerrank;
+  firebase.User _currUser;
   void initializeUser() async {
-    user = await _database.getUser(_auth.getCurrentUser().uid);
-    if (user.codeforces != null && user.codeforces != "")
-      codeforces = await CodeforesServices(handle: user.codeforces).getInfo();
-    if (user.gitHub != null && user.gitHub != "")
-      gitHub = await GitHubServices(handle: user.gitHub).getInfo();
-    if (user.codechef != null && user.codechef != "")
-      codechef = await CodechefServices(handle: user.codechef).getInfo();
-    if (user.hackerRank != null && user.hackerRank != "")
-      hackerrank = await HackerRankServices(handle: user.hackerRank).getInfo();
+    _currUser = _auth.getCurrentUser();
+    if (widget.user == null)
+      widget.user = await _database.getUser(_currUser.uid);
+    if (widget.user.codeforces != null && widget.user.codeforces != "")
+      codeforces =
+          await CodeforesServices(handle: widget.user.codeforces).getInfo();
+    if (widget.user.gitHub != null && widget.user.gitHub != "")
+      gitHub = await GitHubServices(handle: widget.user.gitHub).getInfo();
+    if (widget.user.codechef != null && widget.user.codechef != "")
+      codechef = await CodechefServices(handle: widget.user.codechef).getInfo();
+    if (widget.user.hackerRank != null && widget.user.hackerRank != "")
+      hackerrank =
+          await HackerRankServices(handle: widget.user.hackerRank).getInfo();
 
     setState(() {
       isloading = false;
@@ -65,7 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
     List<Widget> badges = [];
     for (var i in data) {
       badges.add(Container(
-        child: Row(mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FittedBox(
                 child: Text(
@@ -97,44 +104,56 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         backgroundColor: Colors.black,
         brightness: Brightness.light,
-        leading: IconButton(
-          iconSize: 50,
-          icon: Icon(
-            Icons.edit,
-            color: Colors.yellow,
+        leading: _currUser != null
+            ? IconButton(
+                iconSize: 50,
+                icon: Icon(
+                  Icons.edit,
+                  color: Colors.yellow,
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => EditScreen(
+                            username: widget.user.userName,
+                            hackerrank: widget.user.hackerRank,
+                            github: widget.user.gitHub,
+                            achievements: widget.user.achievements,
+                            codeforces: widget.user.codeforces,
+                            codechef: widget.user.codechef,
+                            aboutMe: widget.user.aboutme,
+                            dpurl: widget.user.dpUrl,
+                          )));
+                },
+              )
+            : IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
           ),
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => EditScreen(
-                      username: user.userName,
-                      hackerrank: user.hackerRank,
-                      github: user.gitHub,
-                      achievements: user.achievements,
-                      codeforces: user.codeforces,
-                      codechef: user.codechef,
-                      aboutMe: user.aboutme,
-                      dpurl: user.dpUrl,
-                    )));
-          },
-        ),
         title: Text(
           "PORTFOLIO",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            iconSize: 50,
-            icon: Icon(
-              Icons.exit_to_app,
-              color: Colors.red,
-            ),
-            onPressed: () {
-              _auth.signOut();
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => AuthScreen()));
-            },
-          ),
+          _currUser != null
+              ? IconButton(
+                  iconSize: 50,
+                  icon: Icon(
+                    Icons.exit_to_app,
+                    color: Colors.red,
+                  ),
+                  onPressed: () {
+                    _auth.signOut();
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => AuthScreen()));
+                  },
+                )
+              : SizedBox()
         ],
       ),
       body: isloading
@@ -155,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           fit: BoxFit.fill,
                           height: 200,
                           width: 200,
-                          imageUrl: user.dpUrl,
+                          imageUrl: widget.user.dpUrl,
                           placeholder: (context, url) =>
                               CircularProgressIndicator(
                             backgroundColor: Colors.white,
@@ -171,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Container(
                         width: MediaQuery.of(context).size.width * 0.7,
                         child: FittedBox(
-                          child: Text(user.userName.toUpperCase(),
+                          child: Text(widget.user.userName.toUpperCase(),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -200,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Container(
                               width: double.infinity,
                               padding: EdgeInsets.all(10),
-                              child: Text(user.aboutme,
+                              child: Text(widget.user.aboutme,
                                   style: TextStyle(fontSize: 15))),
                         ],
                       ),
@@ -226,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Container(
                               padding: EdgeInsets.all(10),
                               width: double.infinity,
-                              child: Text(user.achievements,
+                              child: Text(widget.user.achievements,
                                   style: TextStyle(fontSize: 15))),
                         ],
                       ),
@@ -454,7 +473,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             )),
                             onLongPress: () => launch(
                                 "https://www.codechef.com/users/" +
-                                    user.codechef),
+                                    widget.user.codechef),
                           )
                         : SizedBox(),
                     hackerrank != null
@@ -504,7 +523,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             )),
                             onLongPress: () => launch(
                                 "https://www.hackerrank.com/" +
-                                    user.hackerRank),
+                                    widget.user.hackerRank),
                           )
                         : SizedBox(),
                   ],

@@ -19,27 +19,32 @@ class DatabaseServices {
     String achievements,
     String dpUrl,
   }) async {
-      final dpurl = (dp != null)?await StorageRepo().uploadFile(dp):dpUrl;
+    final dpurl = (dp != null) ? await StorageRepo().uploadFile(dp) : dpUrl;
     return await portfolioCollection.doc(id).set({
       'Username': username ?? "",
       'Codechef Handle': codechef_handle ?? "",
       'Codeforces Handle': codeforces_handle ?? "",
       'HackerRank Handle': hackerRank_handle ?? "",
       'GitHub Handle': gitHub_handle ?? "",
-      'dpurl': dpurl??"",
-      'About Me': aboutme??"",
-      'Achievements': achievements??"",
+      'dpurl': dpurl ?? "",
+      'About Me': aboutme ?? "",
+      'Achievements': achievements ?? "",
     });
   }
 
-  List _snapshotList(QuerySnapshot snapshot) {
+  List<Map<String, dynamic>> _snapshotList(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
-      return doc.data()['Username'];
+      return doc.data();
     }).toList();
   }
 
-  Stream<List> get data {
+  Stream<List<Map<String, dynamic>>> get data {
     return portfolioCollection.snapshots().map(_snapshotList);
+  }
+
+  Future<List<Map<String, dynamic>>> get getdata async {
+    final doc = await portfolioCollection.get();
+    return doc.docs.map((e) => e.data()).toList();
   }
 
   Future<User> getUser(String uid) async {
