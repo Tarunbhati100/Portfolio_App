@@ -61,7 +61,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   },
                 )),
             onChanged: (text) async {
-              username = text;
+              username = text.toLowerCase();
             },
           ),
           SizedBox(
