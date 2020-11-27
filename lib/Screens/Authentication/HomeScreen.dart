@@ -20,7 +20,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isloading = true;  final _auth = AuthServices();
+  bool isloading = true;
+  final _auth = AuthServices();
   final _database = DatabaseServices();
   User user;
   Codeforces codeforces;

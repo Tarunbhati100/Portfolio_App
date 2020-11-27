@@ -260,7 +260,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         validator: (val) {
-                          if (val == "") {
+                          if (val.contains(" ") || val != "") {
                             return "Please provide a valid Username.";
                           }
                           return null;
@@ -282,6 +282,12 @@ class _SignUpState extends State<SignUp> {
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                         ),
+                        validator: (val) {
+                          if (val.contains(" ")) {
+                            return "Please provide a valid Username.";
+                          }
+                          return null;
+                        },
                         onChanged: (val) {
                           codechef = val;
                         },
@@ -299,6 +305,12 @@ class _SignUpState extends State<SignUp> {
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                         ),
+                        validator: (val) {
+                          if (val.contains(" ")) {
+                            return "Please provide a valid Username.";
+                          }
+                          return null;
+                        },
                         onChanged: (val) {
                           codeforces = val;
                         },
@@ -316,6 +328,12 @@ class _SignUpState extends State<SignUp> {
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                         ),
+                        validator: (val) {
+                          if (val.contains(" ")) {
+                            return "Please provide a valid Username.";
+                          }
+                          return null;
+                        },
                         onChanged: (val) {
                           hackerrank = val;
                         },
@@ -333,6 +351,12 @@ class _SignUpState extends State<SignUp> {
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                         ),
+                        validator: (val) {
+                          if (val.contains(" ")) {
+                            return "Please provide a valid Username.";
+                          }
+                          return null;
+                        },
                         onChanged: (val) {
                           github = val;
                         },

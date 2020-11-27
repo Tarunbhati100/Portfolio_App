@@ -200,7 +200,7 @@ class _EditScreenState extends State<EditScreen> {
                           ),
                         ),
                         validator: (val) {
-                          if (val == null) {
+                          if (val == null || val.contains(" ")) {
                             return "Please provide a valid Username.";
                           }
                           return null;
@@ -222,6 +222,12 @@ class _EditScreenState extends State<EditScreen> {
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                         ),
+                        validator: (val) {
+                          if (val.contains(" ")) {
+                            return "Please provide a valid Username.";
+                          }
+                          return null;
+                        },
                         onChanged: (val) {
                           widget.codechef = val;
                         },
@@ -239,6 +245,12 @@ class _EditScreenState extends State<EditScreen> {
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                         ),
+                        validator: (val) {
+                          if (val.contains(" ")) {
+                            return "Please provide a valid Username.";
+                          }
+                          return null;
+                        },
                         onChanged: (val) {
                           widget.codeforces = val;
                         },
@@ -256,6 +268,12 @@ class _EditScreenState extends State<EditScreen> {
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                         ),
+                        validator: (val) {
+                          if (val.contains(" ")) {
+                            return "Please provide a valid Username.";
+                          }
+                          return null;
+                        },
                         onChanged: (val) {
                           widget.hackerrank = val;
                         },
@@ -273,6 +291,12 @@ class _EditScreenState extends State<EditScreen> {
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                         ),
+                        validator: (val) {
+                          if (val.contains(" ")) {
+                            return "Please provide a valid Username.";
+                          }
+                          return null;
+                        },
                         onChanged: (val) {
                           widget.github = val;
                         },

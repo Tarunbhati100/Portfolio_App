@@ -26,6 +26,7 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
+  
   List<Widget> buildStars(int count, Color color) {
     List<Icon> stars = [];
     for (int i = 0; i < count; i++) {

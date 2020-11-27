@@ -33,81 +33,75 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         centerTitle: true,
       ),
-      body: Column(
-      children: [
-        SizedBox(
-          height: 10,
-        ),
-        TextFormField(
-          decoration: InputDecoration(
-              hintText: "Enter Username",
-              labelText: "Enter Username",
-              alignLabelWithHint: true,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                borderSide: BorderSide(
-                    color: Colors.teal, style: BorderStyle.solid, width: 2),
-              ),
-              suffixIcon: IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () async {
-                  final alldata = await DatabaseServices().getdata;
-                  setState(() {
-                    data = alldata.where((element) {
-                      return element['Username']
-                          .toString()
-                          .contains(username);
-                    }).toList();
-                  });
-                },
-              )),
-          onChanged: (text) async {
-            username = text;
-            final alldata = await DatabaseServices().getdata;
-            setState(() {
-              data = alldata.where((element) {
-                return element['Username'].toString().contains(username);
-              }).toList();
-            });
-          },
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Column(
-            children: List.generate(data.length, (index) {
-          return ListTile(
-              leading: ClipOval(
-                child: Image.network(
-                  data[index]['dpurl'],
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.fill,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+        children: [
+          TextFormField(
+            decoration: InputDecoration(
+                hintText: "Enter Username",
+                labelText: "Enter Username",
+                alignLabelWithHint: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  borderSide: BorderSide(
+                      color: Colors.teal, style: BorderStyle.solid, width: 2),
                 ),
-              ),
-              title: Text(data[index]['Username'],
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 40,
-                  )),
-              onTap: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) {
-                  return SearchedDataScreen(
-                    user: User(
-                      codeforces: data[index]['Codeforces Handle'],
-                      gitHub:data[index]['GitHub Handle'],
-                      userName:data[index]['Username'],
-                      codechef: data[index]['Codechef Handle'],
-                      hackerRank: data[index]['HackerRank Handle'],
-                      dpUrl: data[index]['dpurl'],
-                      aboutme: data[index]['About Me'],
-                      achievements: data[index]['Achievements'],
-                    ),
-                  );
-                }));
-              });
-        }))
-      ],));
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () async {
+                    final alldata = await DatabaseServices().getdata;
+                    setState(() {
+                      data = alldata.where((element) {
+                        return element['Username']
+                            .toString()
+                            .contains(username);
+                      }).toList();
+                    });
+                  },
+                )),
+            onChanged: (text) async {
+              username = text;
+            },
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Column(
+              children: List.generate(data.length, (index) {
+            return ListTile(
+                leading: ClipOval(
+                  child: Image.network(
+                    data[index]['dpurl'],
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.fill,
+                  ),
+                ),
+                title: Text(data[index]['Username'],
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 40,
+                    )),
+                onTap: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
+                    return SearchedDataScreen(
+                      user: User(
+                        codeforces: data[index]['Codeforces Handle'],
+                        gitHub:data[index]['GitHub Handle'],
+                        userName:data[index]['Username'],
+                        codechef: data[index]['Codechef Handle'],
+                        hackerRank: data[index]['HackerRank Handle'],
+                        dpUrl: data[index]['dpurl'],
+                        aboutme: data[index]['About Me'],
+                        achievements: data[index]['Achievements'],
+                      ),
+                    );
+                  }));
+                });
+          }))
+        ],),
+      ));
   }
 }
