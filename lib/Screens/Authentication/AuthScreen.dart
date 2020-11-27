@@ -1,7 +1,6 @@
 import 'package:Portfolio/Screens/Authentication/SignUp.dart';
 import 'package:Portfolio/Screens/Authentication/signIn.dart';
 import 'package:Portfolio/Screens/SearchScreen.dart';
-import 'package:Portfolio/Services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

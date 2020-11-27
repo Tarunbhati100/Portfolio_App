@@ -1,4 +1,4 @@
-import 'package:Portfolio/Screens/HomeScreen.dart';
+import 'package:Portfolio/Screens/Authentication/HomeScreen.dart';
 import 'package:Portfolio/Services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

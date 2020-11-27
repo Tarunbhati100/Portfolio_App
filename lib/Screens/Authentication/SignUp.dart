@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:Portfolio/Screens/HomeScreen.dart';
+import 'package:Portfolio/Screens/Authentication/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../Services/auth.dart';

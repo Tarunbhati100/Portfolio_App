@@ -1,11 +1,11 @@
 import 'dart:io';
+import 'package:Portfolio/Screens/Authentication/HomeScreen.dart';
 import 'package:Portfolio/Services/database.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../Services/auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import './HomeScreen.dart';
 
 class EditScreen extends StatefulWidget {
   String dpurl;
