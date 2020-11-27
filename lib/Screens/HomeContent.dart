@@ -26,7 +26,6 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
-  
   List<Widget> buildStars(int count, Color color) {
     List<Icon> stars = [];
     for (int i = 0; i < count; i++) {
@@ -49,7 +48,7 @@ class _HomeContentState extends State<HomeContent> {
             FittedBox(
                 child: Text(
               "${i.name} : ${i.star}",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             )),
             Icon(
               Icons.star,
@@ -72,7 +71,7 @@ class _HomeContentState extends State<HomeContent> {
           children: [
             CircleAvatar(
               radius: 103,
-              backgroundColor: Colors.teal,
+              backgroundColor: Colors.amber,
               child: ClipOval(
                 child: CachedNetworkImage(
                   fit: BoxFit.fill,
@@ -96,10 +95,11 @@ class _HomeContentState extends State<HomeContent> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Colors.black,
                           decoration: TextDecoration.underline)),
                 )),
             Card(
+              color: Colors.black,
               child: Column(
                 children: [
                   Row(
@@ -111,7 +111,9 @@ class _HomeContentState extends State<HomeContent> {
                       Text(
                         "AboutMe",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.white),
                       ),
                     ],
                   ),
@@ -122,11 +124,12 @@ class _HomeContentState extends State<HomeContent> {
                       width: double.infinity,
                       padding: EdgeInsets.all(10),
                       child: Text(widget.user.aboutme,
-                          style: TextStyle(fontSize: 15))),
+                          style: TextStyle(fontSize: 15, color: Colors.white))),
                 ],
               ),
             ),
             Card(
+              color: Colors.black,
               child: Column(
                 children: [
                   Row(
@@ -137,7 +140,7 @@ class _HomeContentState extends State<HomeContent> {
                       ),
                       Text("Achievements",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20)),
+                              fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white)),
                     ],
                   ),
                   Divider(
@@ -147,7 +150,7 @@ class _HomeContentState extends State<HomeContent> {
                       padding: EdgeInsets.all(10),
                       width: double.infinity,
                       child: Text(widget.user.achievements,
-                          style: TextStyle(fontSize: 15))),
+                          style: TextStyle(fontSize: 15, color: Colors.white))),
                 ],
               ),
             ),
@@ -155,6 +158,7 @@ class _HomeContentState extends State<HomeContent> {
                 ? SizedBox()
                 : InkWell(
                     child: Card(
+                       color: Colors.black,
                       child: Row(
                         children: [
                           Flexible(
@@ -165,7 +169,7 @@ class _HomeContentState extends State<HomeContent> {
                                   widget.codeforces.handle,
                                   style: TextStyle(
                                       fontSize: 25,
-                                      fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.bold, color: Colors.white),
                                 ),
                               ),
                               Row(
@@ -228,7 +232,7 @@ class _HomeContentState extends State<HomeContent> {
                                   "CodeForces",
                                   style: TextStyle(
                                       fontSize: 25,
-                                      fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.bold, color: Colors.white),
                                 ),
                               ),
                             ]),
@@ -252,6 +256,7 @@ class _HomeContentState extends State<HomeContent> {
             widget.gitHub == null
                 ? SizedBox()
                 : Card(
+                   color: Colors.black,
                     child: Row(
                       children: [
                         Flexible(
@@ -261,7 +266,7 @@ class _HomeContentState extends State<HomeContent> {
                               child: Text(
                                 widget.gitHub.handle,
                                 style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.bold),
+                                    fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                             ),
                             Text(
@@ -274,7 +279,7 @@ class _HomeContentState extends State<HomeContent> {
                             Text(
                               "GitHub",
                               style: TextStyle(
-                                  fontSize: 25, fontWeight: FontWeight.bold),
+                                  fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
                             ),
                             InkWell(
                               child: Text(
@@ -306,6 +311,7 @@ class _HomeContentState extends State<HomeContent> {
             widget.codechef != null
                 ? InkWell(
                     child: Card(
+                       color: Colors.black,
                         child: Row(
                       children: [
                         Flexible(
@@ -318,13 +324,13 @@ class _HomeContentState extends State<HomeContent> {
                                     "Codechef Handle : ",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 15,
+                                      fontSize: 15, color: Colors.white
                                     ),
                                   ),
                                   FittedBox(
                                       child: Text(
                                     widget.codechef.handle,
-                                    style: TextStyle(fontSize: 60),
+                                    style: TextStyle(fontSize:50, color: Colors.white),
                                   )),
                                 ],
                               ),
@@ -338,12 +344,12 @@ class _HomeContentState extends State<HomeContent> {
                               Text(
                                 "Current Rating : " +
                                     widget.codechef.rating.toString(),
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
                               ),
                               Text(
                                 "Max. Rating : " +
                                     widget.codechef.maxrating.toString(),
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
                               )
                             ],
                           ),
@@ -369,6 +375,7 @@ class _HomeContentState extends State<HomeContent> {
             widget.hackerrank != null
                 ? InkWell(
                     child: Card(
+                       color: Colors.black,
                         child: Row(
                       children: [
                         Flexible(
@@ -381,13 +388,13 @@ class _HomeContentState extends State<HomeContent> {
                                     "HackerRank Handle : ",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 15,
+                                      fontSize: 15, color: Colors.white
                                     ),
                                   ),
                                   FittedBox(
                                       child: Text(
                                     widget.hackerrank.handle,
-                                    style: TextStyle(fontSize: 60),
+                                    style: TextStyle(fontSize: 60, color: Colors.white),
                                   )),
                                 ],
                               ),

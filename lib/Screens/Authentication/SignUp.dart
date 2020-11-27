@@ -260,7 +260,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         validator: (val) {
-                          if (val.contains(" ") || val != "") {
+                          if (val.contains(" ") || val == "") {
                             return "Please provide a valid Username.";
                           }
                           return null;

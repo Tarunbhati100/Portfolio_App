@@ -52,16 +52,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         brightness: Brightness.light,
         leading: IconButton(
           iconSize: 50,
           icon: Icon(
             Icons.edit,
-            color: Colors.yellow,
+            color: Colors.amber[800],
           ),
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
@@ -77,10 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     )));
           },
         ),
-        title: Text(
-          "PORTFOLIO",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: Text("PORTFOLIO",
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
         centerTitle: true,
         actions: [
           IconButton(

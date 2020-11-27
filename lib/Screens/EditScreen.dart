@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:Portfolio/Screens/Authentication/AuthScreen.dart';
 import 'package:Portfolio/Screens/Authentication/HomeScreen.dart';
 import 'package:Portfolio/Services/database.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -42,16 +43,61 @@ class _EditScreenState extends State<EditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => HomeScreen()));
-          },
-        ),
-      ),
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.black),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          title: Text("PORTFOLIO",
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Confirm Deletion'),
+                      content: SingleChildScrollView(
+                        child: ListBody(
+                          children: <Widget>[
+                            Text(
+                                'Are you sure you want to delete your account?'),
+                          ],
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('Yes'),
+                          onPressed: () {
+                            _auth.deleteUser();
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => AuthScreen()));
+                          },
+                        ),
+                        TextButton(
+                          child: Text('No'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            )
+          ]),
       body: ModalProgressHUD(
         inAsyncCall: isloading,
         child: Container(

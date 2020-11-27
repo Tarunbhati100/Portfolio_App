@@ -60,4 +60,8 @@ class DatabaseServices {
       achievements: doc.data()['Achievements'],
     );
   }
+  void deleteUserdata(String uid){
+    portfolioCollection.doc(uid).delete();
+    StorageRepo().deleteStorageData(uid);
+  }
 }

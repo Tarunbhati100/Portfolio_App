@@ -10,8 +10,12 @@ class StorageRepo {
     var user = _auth.getCurrentUser();
     var storageRef = storage.ref().child("user/profile/${user.uid}");
     await storageRef.putFile(file);
-    final  downloadableLink = await storageRef.getDownloadURL();
+    final downloadableLink = await storageRef.getDownloadURL();
     return downloadableLink;
   }
-  
+
+  void deleteStorageData(String uid) {
+    var storageRef = storage.ref().child("user/profile/${uid}");
+    storageRef.delete();
+  }
 }

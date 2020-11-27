@@ -25,13 +25,15 @@ class _SearchedDataScreenState extends State<SearchedDataScreen> {
   HackerRank hackerrank;
   void initializeUser() async {
     if (widget.user.codeforces != null && widget.user.codeforces != "")
-      codeforces = await CodeforesServices(handle: widget.user.codeforces).getInfo();
+      codeforces =
+          await CodeforesServices(handle: widget.user.codeforces).getInfo();
     if (widget.user.gitHub != null || widget.user.gitHub != "")
       gitHub = await GitHubServices(handle: widget.user.gitHub).getInfo();
     if (widget.user.codechef != null || widget.user.codechef != "")
       codechef = await CodechefServices(handle: widget.user.codechef).getInfo();
     if (widget.user.hackerRank != null || widget.user.hackerRank != "")
-      hackerrank = await HackerRankServices(handle: widget.user.hackerRank).getInfo();
+      hackerrank =
+          await HackerRankServices(handle: widget.user.hackerRank).getInfo();
     setState(() {
       isloading = false;
     });
@@ -46,22 +48,22 @@ class _SearchedDataScreenState extends State<SearchedDataScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         brightness: Brightness.light,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: Colors.white,
+            color: Colors.black,
           ),
           onPressed: () {
-            Navigator.of(context).pop();},
+            Navigator.of(context).pop();
+          },
         ),
         title: Text(
           "PORTFOLIO",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
         centerTitle: true,
       ),

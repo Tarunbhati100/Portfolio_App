@@ -4,7 +4,7 @@ import 'database.dart';
 
 class AuthServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  final _database = DatabaseServices();
   Stream<User> get user {
     return _auth.authStateChanges();
   }
@@ -35,7 +35,7 @@ class AuthServices {
     try {
       final result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      await DatabaseServices().updateUserData(
+      await _database.updateUserData(
           id: result.user.uid,
           username: username,
           codechef_handle: codechef_handle,
@@ -70,5 +70,11 @@ class AuthServices {
       print(error.toString());
       return null;
     }
+  }
+
+  void deleteUser() {
+    final user = _auth.currentUser;
+    _database.deleteUserdata(user.uid);
+    user.delete();
   }
 }
