@@ -7,6 +7,10 @@ class User {
   String dpUrl;
   String aboutme;
   String achievements;
+  String gmail;
+  String mobileNumber;
+  String linkedIn;
+
   User(
       {this.codeforces,
       this.gitHub,
@@ -15,5 +19,8 @@ class User {
       this.hackerRank,
       this.dpUrl,
       this.aboutme,
-      this.achievements});
+      this.achievements,
+      this.gmail,
+      this.linkedIn,
+      this.mobileNumber});
 }

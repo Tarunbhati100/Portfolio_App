@@ -18,6 +18,9 @@ class DatabaseServices {
     String aboutme,
     String achievements,
     String dpUrl,
+    String gmail,
+    String mobileNumber,
+    String linkedIn,
   }) async {
     final dpurl = (dp != null) ? await StorageRepo().uploadFile(dp) : dpUrl;
     return await portfolioCollection.doc(id).set({
@@ -29,6 +32,9 @@ class DatabaseServices {
       'dpurl': dpurl ?? "",
       'About Me': aboutme ?? "",
       'Achievements': achievements ?? "",
+      'linkedIn': linkedIn ?? "",
+      'mobileNumber': mobileNumber ?? "",
+      'gmail': gmail ?? "",
     });
   }
 
@@ -58,9 +64,13 @@ class DatabaseServices {
       dpUrl: doc.data()['dpurl'],
       aboutme: doc.data()['About Me'],
       achievements: doc.data()['Achievements'],
+      linkedIn: doc.data()['linkedIn'],
+      mobileNumber: doc.data()['mobileNumber'],
+      gmail: doc.data()['gmail'],
     );
   }
-  void deleteUserdata(String uid){
+
+  void deleteUserdata(String uid) {
     portfolioCollection.doc(uid).delete();
     StorageRepo().deleteStorageData(uid);
   }

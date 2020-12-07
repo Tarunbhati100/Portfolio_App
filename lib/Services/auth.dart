@@ -31,24 +31,30 @@ class AuthServices {
     String gitHub_handle,
     String aboutme,
     String achievements,
+    String gmail,
+    String mobileNumber,
+    String linkedIn,
   }) async {
     try {
       final result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       await _database.updateUserData(
-          id: result.user.uid,
-          username: username,
-          codechef_handle: codechef_handle,
-          codeforces_handle: codeforces_handle,
-          hackerRank_handle: hackerRank_handle,
-          gitHub_handle: gitHub_handle,
-          dp: dp,
-          aboutme: aboutme,
-          achievements: achievements);
+        id: result.user.uid,
+        username: username,
+        codechef_handle: codechef_handle,
+        codeforces_handle: codeforces_handle,
+        hackerRank_handle: hackerRank_handle,
+        gitHub_handle: gitHub_handle,
+        dp: dp,
+        aboutme: aboutme,
+        achievements: achievements,
+        linkedIn: linkedIn,
+        mobileNumber: mobileNumber,
+        gmail: gmail,
+      );
       return result;
     } catch (error) {
-      print(error.toString());
-      return null;
+      throw error;
     }
   }
 
@@ -59,7 +65,7 @@ class AuthServices {
       return result;
     } catch (error) {
       print(error.toString());
-      return null;
+      throw error;
     }
   }
 

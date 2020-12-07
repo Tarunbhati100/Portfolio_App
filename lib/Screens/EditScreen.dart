@@ -2,14 +2,18 @@ import 'dart:io';
 import 'package:Portfolio/Screens/Authentication/AuthScreen.dart';
 import 'package:Portfolio/Screens/Authentication/HomeScreen.dart';
 import 'package:Portfolio/Services/database.dart';
+import 'package:Portfolio/Services/adManager.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import '../Services/auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class EditScreen extends StatefulWidget {
   String dpurl;
+  String currusername;
   String username;
   String codechef;
   String codeforces;
@@ -17,7 +21,10 @@ class EditScreen extends StatefulWidget {
   String github;
   String aboutMe;
   String achievements;
-  PickedFile image;
+  File image;
+  String gmail;
+  String mobilenumber;
+  String linkedIn;
   EditScreen({
     this.dpurl,
     this.github,
@@ -27,7 +34,12 @@ class EditScreen extends StatefulWidget {
     this.username,
     this.achievements,
     this.aboutMe,
-  });
+    this.gmail,
+    this.mobilenumber,
+    this.linkedIn,
+  }) {
+    currusername = username;
+  }
   @override
   _EditScreenState createState() => _EditScreenState();
 }
@@ -38,6 +50,69 @@ class _EditScreenState extends State<EditScreen> {
 
   final _formkey = GlobalKey<FormState>();
   bool isloading = false;
+  BannerAd _bannerAd;
+  InterstitialAd _interstitialAd;
+  bool _isInterstitialAdReady;
+  bool _usernameavailable = true;
+
+  void _loadInterstitialAd() {
+    _interstitialAd.load();
+  }
+
+  bool _checkUser(List<Map<String, dynamic>> data, String username) {
+    for (var element in data) {
+      if (element['Username'].toString() == username) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void _loadBannerAd() {
+    _bannerAd
+      ..load()
+      ..show(anchorType: AnchorType.bottom);
+  }
+
+  void _onInterstitialAdEvent(MobileAdEvent event) {
+    switch (event) {
+      case MobileAdEvent.loaded:
+        _isInterstitialAdReady = true;
+        break;
+      case MobileAdEvent.failedToLoad:
+        _isInterstitialAdReady = false;
+        print('Failed to load an interstitial ad');
+        break;
+      case MobileAdEvent.closed:
+        _loadInterstitialAd();
+        break;
+      default:
+      // do nothing
+    }
+  }
+
+  @override
+  void initState() {
+    _bannerAd = BannerAd(
+      adUnitId: AdManager.bannerAdUnitId,
+      size: AdSize.banner,
+    );
+    _loadBannerAd();
+    _isInterstitialAdReady = false;
+    _interstitialAd = InterstitialAd(
+      adUnitId: AdManager.interstitialAdUnitId,
+      listener: _onInterstitialAdEvent,
+    );
+    _loadInterstitialAd();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +154,9 @@ class _EditScreenState extends State<EditScreen> {
                         TextButton(
                           child: Text('Yes'),
                           onPressed: () {
+                            if (_isInterstitialAdReady) {
+                              _interstitialAd.show();
+                            }
                             _auth.deleteUser();
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
@@ -129,8 +207,20 @@ class _EditScreenState extends State<EditScreen> {
                 ),
                 InkWell(
                   onTap: () async {
-                    widget.image = await ImagePicker().getImage(
+                    final selectedImg = await ImagePicker().getImage(
                         source: ImageSource.gallery, imageQuality: 50);
+                    widget.image = await ImageCropper.cropImage(
+                        sourcePath: selectedImg.path,
+                        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+                        androidUiSettings: AndroidUiSettings(
+                            toolbarTitle: 'Cropper',
+                            toolbarColor: Colors.deepOrange,
+                            toolbarWidgetColor: Colors.white,
+                            initAspectRatio: CropAspectRatioPreset.original,
+                            lockAspectRatio: true),
+                        iosUiSettings: IOSUiSettings(
+                          minimumAspectRatio: 1.0,
+                        ));
                     setState(() {});
                   },
                   child: Stack(
@@ -139,36 +229,29 @@ class _EditScreenState extends State<EditScreen> {
                         radius: 100,
                         backgroundColor: Colors.amber,
                         child: widget.image == null
-                            ? CircleAvatar(
-                                radius: 105,
-                                backgroundColor: Colors.blueGrey,
-                                child: ClipOval(
-                                  child: widget.dpurl == null
-                                      ? SizedBox()
-                                      : CachedNetworkImage(
-                                          fit: BoxFit.fill,
-                                          height: 200,
-                                          width: 200,
-                                          imageUrl: widget.dpurl,
-                                          placeholder: (context, url) =>
-                                              CircularProgressIndicator(
-                                            backgroundColor: Colors.white,
-                                          ),
-                                          errorWidget: (context, url, error) =>
-                                              Icon(Icons.error),
-                                        ),
+                            ? ClipOval(
+                                child: CachedNetworkImage(
+                                  fit: BoxFit.fill,
+                                  height: 200,
+                                  width: 200,
+                                  imageUrl: widget.dpurl,
+                                  placeholder: (context, url) =>
+                                      CircularProgressIndicator(
+                                    backgroundColor: Colors.white,
+                                  ),
+                                  errorWidget: (context, url, error) => Icon(
+                                    Icons.account_circle,
+                                    color: Colors.white,
+                                    size: 200,
+                                  ),
                                 ),
                               )
-                            : CircleAvatar(
-                                radius: 105,
-                                backgroundColor: Colors.blueGrey,
-                                child: ClipOval(
-                                  child: Image.file(
-                                    File(widget.image.path),
-                                    fit: BoxFit.fill,
-                                    width: 200,
-                                    height: 200,
-                                  ),
+                            : ClipOval(
+                                child: Image.file(
+                                  File(widget.image.path),
+                                  fit: BoxFit.fill,
+                                  width: 200,
+                                  height: 200,
                                 ),
                               ),
                       ),
@@ -187,6 +270,7 @@ class _EditScreenState extends State<EditScreen> {
                 Form(
                   key: _formkey,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       TextFormField(
                         initialValue: widget.aboutMe,
@@ -246,12 +330,19 @@ class _EditScreenState extends State<EditScreen> {
                           ),
                         ),
                         validator: (val) {
-                          if (val == null || val.contains(" ")) {
+                          if (val.isEmpty) {
                             return "Please provide a valid Username.";
+                          } else if (val.contains(" ")) {
+                            return "Username should not contain spaces. ";
+                          } else if (_usernameavailable == false &&
+                              widget.currusername != val) {
+                            return "Username Already Exist. Please Try another one.";
                           }
                           return null;
                         },
-                        onChanged: (val) {
+                        onChanged: (val) async {
+                          final alldata = await DatabaseServices().getdata;
+                          _usernameavailable = _checkUser(alldata, val);
                           widget.username = val.toLowerCase();
                         },
                       ),
@@ -350,6 +441,72 @@ class _EditScreenState extends State<EditScreen> {
                       SizedBox(
                         height: 10,
                       ),
+                      TextFormField(
+                        initialValue: widget.gmail,
+                        decoration: InputDecoration(
+                          hintText: "Gmail Account",
+                          labelText: "Gmail Account",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                        ),
+                        validator: (val) {
+                          if (!val.contains("@gmail.com")) {
+                            return "Please provide a valid Gmail Account.";
+                          }
+                          return null;
+                        },
+                        onChanged: (val) {
+                          widget.gmail = val;
+                        },
+                      ),
+                      TextFormField(
+                        initialValue: widget.linkedIn,
+                        decoration: InputDecoration(
+                          hintText: "LinkedIn Url",
+                          labelText: "LinkedIn Url",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                        ),
+                        onChanged: (val) {
+                          widget.linkedIn = val;
+                        },
+                        validator: (val) {
+                          var urlPattern =
+                              r"(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
+                          RegExp regExp = new RegExp(urlPattern);
+                          if (!regExp.hasMatch(val)) {
+                            return 'Please enter valid Url';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        initialValue: widget.mobilenumber,
+                        decoration: InputDecoration(
+                          hintText: "Moblie Number",
+                          labelText:
+                              "Plz Provide Mobile Number with Country Code.",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                        ),
+                        validator: (val) {
+                          String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+                          RegExp regExp = new RegExp(pattern);
+                          if (!regExp.hasMatch(val)) {
+                            return 'Please enter valid mobile number';
+                          }
+                          return null;
+                        },
+                        onChanged: (val) {
+                          widget.mobilenumber = val;
+                        },
+                      ),
                       RaisedButton(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
@@ -359,6 +516,9 @@ class _EditScreenState extends State<EditScreen> {
                             isloading = true;
                           });
                           try {
+                            if (_isInterstitialAdReady) {
+                              _interstitialAd.show();
+                            }
                             if (_formkey.currentState.validate()) {
                               await _database.updateUserData(
                                   id: _auth.getCurrentUser().uid,
@@ -367,12 +527,13 @@ class _EditScreenState extends State<EditScreen> {
                                   codeforces_handle: widget.codeforces,
                                   hackerRank_handle: widget.hackerrank,
                                   gitHub_handle: widget.github,
-                                  dp: widget.image != null
-                                      ? File(widget.image.path)
-                                      : null,
+                                  dp: widget.image,
                                   aboutme: widget.aboutMe,
                                   achievements: widget.achievements,
-                                  dpUrl: widget.dpurl);
+                                  dpUrl: widget.dpurl,
+                                  gmail: widget.gmail,
+                                  linkedIn: widget.linkedIn,
+                                  mobileNumber: widget.mobilenumber);
                               Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                       builder: (context) => HomeScreen()));
@@ -393,6 +554,9 @@ class _EditScreenState extends State<EditScreen> {
                     ],
                   ),
                 ),
+                SizedBox(
+                  height: AdSize.banner.height + 5.0,
+                )
               ],
             ),
           ),

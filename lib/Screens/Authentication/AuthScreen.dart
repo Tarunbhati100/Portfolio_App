@@ -25,8 +25,8 @@ class _AuthScreenState extends State<AuthScreen> {
                     style: TextStyle(color: Colors.blue, fontSize: 20),
                   ),
                   onPressed: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => SearchScreen()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => SearchScreen()));
                   }))
         ],
       ),

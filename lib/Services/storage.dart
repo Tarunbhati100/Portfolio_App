@@ -15,7 +15,7 @@ class StorageRepo {
   }
 
   void deleteStorageData(String uid) {
-    var storageRef = storage.ref().child("user/profile/${uid}");
+    var storageRef = storage.ref().child("user/profile/$uid");
     storageRef.delete();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:Portfolio/Screens/HomeContent.dart';
+import 'package:Portfolio/Screens/SearchScreen.dart';
 import 'package:Portfolio/Services/codechef.dart';
 import 'package:Portfolio/Services/codeforces.dart';
 import 'package:Portfolio/Services/github.dart';
@@ -58,7 +59,10 @@ class _SearchedDataScreenState extends State<SearchedDataScreen> {
             color: Colors.black,
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context)
+                .pushReplacement(MaterialPageRoute(builder: (context) {
+              return SearchScreen();
+            }));
           },
         ),
         title: Text(

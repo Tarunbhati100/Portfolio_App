@@ -1,15 +1,20 @@
 import 'package:Portfolio/Screens/Authentication/HomeScreen.dart';
 import 'package:Portfolio/Services/auth.dart';
+import 'package:Portfolio/Services/adManager.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'SignUp.dart';
+
 class SignIn extends StatefulWidget {
   @override
   _SignInState createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
+  BannerAd _bannerAd;
   bool _showPassword = false;
   final _auth = AuthServices();
 
@@ -18,6 +23,59 @@ class _SignInState extends State<SignIn> {
   String password;
 
   bool isloading = false;
+  InterstitialAd _interstitialAd;
+  bool _isInterstitialAdReady;
+  final _formkey = GlobalKey<FormState>();
+  void _loadInterstitialAd() {
+    _interstitialAd.load();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd
+      ..load()
+      ..show(anchorType: AnchorType.bottom);
+  }
+
+  void _onInterstitialAdEvent(MobileAdEvent event) {
+    switch (event) {
+      case MobileAdEvent.loaded:
+        _isInterstitialAdReady = true;
+        break;
+      case MobileAdEvent.failedToLoad:
+        _isInterstitialAdReady = false;
+        print('Failed to load an interstitial ad');
+        break;
+      case MobileAdEvent.closed:
+        _loadInterstitialAd();
+        break;
+      default:
+      // do nothing
+    }
+  }
+
+  @override
+  void initState() {
+    _bannerAd = BannerAd(
+      adUnitId: AdManager.bannerAdUnitId,
+      size: AdSize.banner,
+    );
+    _loadBannerAd();
+
+    _isInterstitialAdReady = false;
+    _interstitialAd = InterstitialAd(
+      adUnitId: AdManager.interstitialAdUnitId,
+      listener: _onInterstitialAdEvent,
+    );
+    _loadInterstitialAd();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,103 +123,139 @@ class _SignInState extends State<SignIn> {
                 SizedBox(
                   height: 20,
                 ),
-                TextFormField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: "Email",
-                    labelText: "Email",
-                    alignLabelWithHint: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                    ),
-                  ),
-                  onChanged: (val) {
-                    emailid = val;
-                  },
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                TextFormField(
-                  keyboardType: TextInputType.visiblePassword,
-                  obscureText: !_showPassword,
-                  decoration: InputDecoration(
-                    hintText: "Password",
-                    labelText: "Password",
-                    alignLabelWithHint: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: _showPassword
-                          ? Icon(Icons.remove_red_eye)
-                          : Icon(Icons.remove_red_eye_outlined),
-                      onPressed: () {
-                        setState(() {
-                          _showPassword = !_showPassword;
-                        });
-                      },
-                    ),
-                  ),
-                  onChanged: (val) {
-                    password = val;
-                  },
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                RaisedButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  color: Colors.yellow,
-                  onPressed: () async {
-                    setState(() {
-                      isloading = true;
-                    });
-                    try {
-                      final newUser = await _auth.signInWithEmailAndPassword(
-                          emailid, password);
-                      if (newUser != null) {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => HomeScreen()));
-                      }
-                    } catch (e) {
-                      print(e);
-                    } finally {
-                      setState(() {
-                        isloading = false;
-                      });
-                    }
-                  },
-                  child: Text(
-                    "Log In",
-                    style: TextStyle(fontSize: 50),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      "Don't have an Account? | ",
-                      textAlign: TextAlign.end,
-                    ),
-                    FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (context) => SignUp()));
+                Form(
+                  key: _formkey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (val) {
+                          if (val.isEmpty) {
+                            return "Please Enter your email.";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          hintText: "Email",
+                          labelText: "Email",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                        ),
+                        onChanged: (val) {
+                          emailid = val;
+                        },
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: !_showPassword,
+                        textInputAction: TextInputAction.none,
+                        validator: (val) {
+                          if (val.length < 6) {
+                            return "Password must contain atleast 6 characters.";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          hintText: "Password",
+                          labelText: "Password",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: _showPassword
+                                ? Icon(Icons.remove_red_eye)
+                                : Icon(Icons.remove_red_eye_outlined),
+                            onPressed: () {
+                              setState(() {
+                                _showPassword = !_showPassword;
+                              });
+                            },
+                          ),
+                        ),
+                        onChanged: (val) {
+                          password = val;
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        color: Colors.yellow,
+                        onPressed: () async {
+                          if(_formkey.currentState.validate()){
+                          setState(() {
+                            isloading = true;
+                          });
+                          try {
+                            if (_isInterstitialAdReady) {
+                              _interstitialAd.show();
+                            }
+                            final newUser = await _auth
+                                .signInWithEmailAndPassword(emailid, password);
+                            if (newUser != null) {
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => HomeScreen()));
+                            }
+                          } catch (e) {
+                            Flushbar(
+                              icon:
+                                  Icon(Icons.error_outline, color: Colors.red),
+                              flushbarPosition: FlushbarPosition.TOP,
+                              message: e.message,
+                              duration: Duration(seconds: 3),
+                            ).show(context);
+                          } finally {
+                            setState(() {
+                              isloading = false;
+                            });
+                          }
+                          }
                         },
                         child: Text(
-                          "Sign Up",
-                          style: TextStyle(
-                            color: Colors.blue,
+                          "Log In",
+                          style: TextStyle(fontSize: 50),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "Don't have an Account? | ",
+                            textAlign: TextAlign.end,
                           ),
-                        ))
-                  ],
+                          FlatButton(
+                              onPressed: () {
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) => SignUp()));
+                              },
+                              child: Text(
+                                "Sign Up",
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                ),
+                              ))
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 Container(
                   height: 150,
                   child: SvgPicture.asset("./assets/lighthouse.svg"),
+                ),
+                SizedBox(
+                  height: AdSize.banner.height + 10.0,
                 )
               ],
             ),

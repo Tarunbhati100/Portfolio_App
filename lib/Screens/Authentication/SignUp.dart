@@ -1,6 +1,11 @@
 import 'dart:io';
 import 'package:Portfolio/Screens/Authentication/HomeScreen.dart';
+import 'package:Portfolio/Services/adManager.dart';
+import 'package:Portfolio/Services/database.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../Services/auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -26,7 +31,74 @@ class _SignUpState extends State<SignUp> {
   String github;
   String aboutMe;
   String achievements;
-  PickedFile image;
+  File image;
+  BannerAd _bannerAd;
+  InterstitialAd _interstitialAd;
+  bool _usernameavailable = true;
+  bool _isInterstitialAdReady;
+  String gmail;
+  String mobilenumber;
+  String linkedIn;
+  void _loadInterstitialAd() {
+    _interstitialAd.load();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd
+      ..load()
+      ..show(anchorType: AnchorType.bottom);
+  }
+
+  bool _checkUser(List<Map<String, dynamic>> data, String username) {
+    for (var element in data) {
+      if (element['Username'].toString() == username) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void _onInterstitialAdEvent(MobileAdEvent event) {
+    switch (event) {
+      case MobileAdEvent.loaded:
+        _isInterstitialAdReady = true;
+        break;
+      case MobileAdEvent.failedToLoad:
+        _isInterstitialAdReady = false;
+        print('Failed to load an interstitial ad');
+        break;
+      case MobileAdEvent.closed:
+        _loadInterstitialAd();
+        break;
+      default:
+      // do nothing
+    }
+  }
+
+  @override
+  void initState() {
+    _bannerAd = BannerAd(
+      adUnitId: AdManager.bannerAdUnitId,
+      size: AdSize.banner,
+    );
+    _loadBannerAd();
+
+    _isInterstitialAdReady = false;
+    _interstitialAd = InterstitialAd(
+      adUnitId: AdManager.interstitialAdUnitId,
+      listener: _onInterstitialAdEvent,
+    );
+    _loadInterstitialAd();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,8 +147,20 @@ class _SignUpState extends State<SignUp> {
                 ),
                 InkWell(
                   onTap: () async {
-                    image = await ImagePicker().getImage(
+                    final selectedImg = await ImagePicker().getImage(
                         source: ImageSource.gallery, imageQuality: 50);
+                    image = await ImageCropper.cropImage(
+                        sourcePath: selectedImg.path,
+                        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+                        androidUiSettings: AndroidUiSettings(
+                            toolbarTitle: 'Cropper',
+                            toolbarColor: Colors.deepOrange,
+                            toolbarWidgetColor: Colors.white,
+                            initAspectRatio: CropAspectRatioPreset.original,
+                            lockAspectRatio: true),
+                        iosUiSettings: IOSUiSettings(
+                          minimumAspectRatio: 1.0,
+                        ));
                     setState(() {});
                   },
                   child: Stack(
@@ -86,9 +170,9 @@ class _SignUpState extends State<SignUp> {
                         backgroundColor: Colors.amber,
                         child: image == null
                             ? Icon(
-                                Icons.image,
-                                size: 100,
-                                color: Colors.black,
+                                Icons.account_circle,
+                                color: Colors.white,
+                                size: 200,
                               )
                             : ClipOval(
                                 child: Image.file(
@@ -114,6 +198,7 @@ class _SignUpState extends State<SignUp> {
                 Form(
                   key: _formkey,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       TextFormField(
                         keyboardType: TextInputType.emailAddress,
@@ -140,6 +225,7 @@ class _SignUpState extends State<SignUp> {
                       ),
                       TextFormField(
                         keyboardType: TextInputType.visiblePassword,
+                        textInputAction: TextInputAction.none,
                         obscureText: !_showPassword,
                         decoration: InputDecoration(
                           hintText: "Password",
@@ -175,6 +261,7 @@ class _SignUpState extends State<SignUp> {
                       TextFormField(
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: !_showConfirmPassword,
+                        textInputAction: TextInputAction.none,
                         decoration: InputDecoration(
                           hintText: "Confirm Password",
                           labelText: "Confirm Password",
@@ -250,7 +337,6 @@ class _SignUpState extends State<SignUp> {
                         height: 10,
                       ),
                       TextFormField(
-                        keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           hintText: "UserName",
                           labelText: "UserName",
@@ -260,12 +346,18 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         validator: (val) {
-                          if (val.contains(" ") || val == "") {
+                          if (val.isEmpty) {
                             return "Please provide a valid Username.";
+                          } else if (val.contains(" ")) {
+                            return "Username should not contain spaces. ";
+                          } else if (_usernameavailable == false) {
+                            return "Username Already Exist. Please Try another one.";
                           }
                           return null;
                         },
-                        onChanged: (val) {
+                        onChanged: (val) async {
+                          final alldata = await DatabaseServices().getdata;
+                          _usernameavailable = _checkUser(alldata, val);
                           username = val.toLowerCase();
                         },
                       ),
@@ -273,7 +365,6 @@ class _SignUpState extends State<SignUp> {
                         height: 10,
                       ),
                       TextFormField(
-                        keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           hintText: "Codechef Handle",
                           labelText: "Codechef Handle",
@@ -296,7 +387,6 @@ class _SignUpState extends State<SignUp> {
                         height: 10,
                       ),
                       TextFormField(
-                        keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           hintText: "Codeforces Handle",
                           labelText: "Codeforces Handle",
@@ -319,7 +409,6 @@ class _SignUpState extends State<SignUp> {
                         height: 10,
                       ),
                       TextFormField(
-                        keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           hintText: "HakerRank Handle",
                           labelText: "HackerRank Handle",
@@ -342,7 +431,6 @@ class _SignUpState extends State<SignUp> {
                         height: 10,
                       ),
                       TextFormField(
-                        keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           hintText: "GitHub Handle",
                           labelText: "GitHub Handle",
@@ -364,30 +452,107 @@ class _SignUpState extends State<SignUp> {
                       SizedBox(
                         height: 10,
                       ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          hintText: "Gmail Account",
+                          labelText: "Gmail Account",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                        ),
+                        validator: (val) {
+                          if (!val.contains("@gmail.com")) {
+                            return "Please provide a valid Gmail Account.";
+                          }
+                          return null;
+                        },
+                        onChanged: (val) {
+                          gmail = val;
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          hintText: "LinkedIn Url",
+                          labelText: "LinkedIn Url",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                        ),
+                        onChanged: (val) {
+                          linkedIn = val;
+                        },
+                        validator: (val) {
+                          var urlPattern =
+                              r"(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
+                          RegExp regExp = new RegExp(urlPattern);
+                          if (!regExp.hasMatch(val)) {
+                            return 'Please enter valid Url';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          hintText: "Moblie Number",
+                          labelText:
+                              "Plz Provide Mobile Number with Country Code.",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                        ),
+                        validator: (val) {
+                          String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+                          RegExp regExp = new RegExp(pattern);
+                          if (!regExp.hasMatch(val)) {
+                            return 'Please enter valid mobile number';
+                          }
+                          return null;
+                        },
+                        onChanged: (val) {
+                          mobilenumber = val;
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
                       RaisedButton(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                         color: Colors.yellow,
                         onPressed: () async {
-                          setState(() {
-                            isloading = true;
-                          });
-                          try {
-                            if (_formkey.currentState.validate()) {
+                          if (_formkey.currentState.validate()) {
+                            setState(() {
+                              isloading = true;
+                            });
+                            try {
+                              if (_isInterstitialAdReady) {
+                                _interstitialAd.show();
+                              }
                               final newUser =
                                   await _auth.registerWithEmailAndPassword(
-                                      email: emailid,
-                                      password: password,
-                                      username: username,
-                                      codechef_handle: codechef,
-                                      codeforces_handle: codeforces,
-                                      hackerRank_handle: hackerrank,
-                                      gitHub_handle: github,
-                                      dp: image != null
-                                          ? File(image.path)
-                                          : null,
-                                      aboutme: aboutMe,
-                                      achievements: achievements);
+                                email: emailid,
+                                password: password,
+                                username: username,
+                                codechef_handle: codechef,
+                                codeforces_handle: codeforces,
+                                hackerRank_handle: hackerrank,
+                                gitHub_handle: github,
+                                dp: image,
+                                aboutme: aboutMe,
+                                achievements: achievements,
+                                gmail: gmail,
+                                linkedIn: linkedIn,
+                                mobileNumber: mobilenumber,
+                              );
                               if (newUser != null) {
                                 await _auth.signInWithEmailAndPassword(
                                     emailid, password);
@@ -395,13 +560,19 @@ class _SignUpState extends State<SignUp> {
                                     MaterialPageRoute(
                                         builder: (context) => HomeScreen()));
                               }
+                            } catch (e) {
+                              Flushbar(
+                                icon: Icon(Icons.error_outline,
+                                    color: Colors.red),
+                                flushbarPosition: FlushbarPosition.TOP,
+                                message: e.message,
+                                duration: Duration(seconds: 3),
+                              ).show(context);
+                            } finally {
+                              setState(() {
+                                isloading = false;
+                              });
                             }
-                          } catch (e) {
-                            print(e);
-                          } finally {
-                            setState(() {
-                              isloading = false;
-                            });
                           }
                         },
                         child: Text(
@@ -430,9 +601,12 @@ class _SignUpState extends State<SignUp> {
                           style: TextStyle(
                             color: Colors.blue,
                           ),
-                        ))
+                        )),
                   ],
                 ),
+                SizedBox(
+                  height: AdSize.banner.height + 10.0,
+                )
               ],
             ),
           ),
