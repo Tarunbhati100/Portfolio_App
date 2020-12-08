@@ -48,7 +48,7 @@ class _AuthScreenState extends State<AuthScreen> {
               textAlign: TextAlign.center,
             ),
             Expanded(
-              child: SvgPicture.asset("./assets/profile.svg"),
+              child: SvgPicture.asset("./assets/images/profile.svg"),
             ),
             RaisedButton(
               color: Colors.white,

@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:Portfolio/Screens/Authentication/HomeScreen.dart';
+import 'package:Portfolio/Screens/HomeScreen.dart';
 import 'package:Portfolio/Services/adManager.dart';
 import 'package:Portfolio/Services/database.dart';
 import 'package:firebase_admob/firebase_admob.dart';
@@ -494,8 +494,7 @@ class _SignUpState extends State<SignUp> {
                       TextFormField(
                         decoration: InputDecoration(
                           hintText: "Moblie Number",
-                          labelText:
-                              "Plz Provide Mobile Number with Country Code.",
+                          labelText: "Moblie Number",
                           alignLabelWithHint: true,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -534,10 +533,10 @@ class _SignUpState extends State<SignUp> {
                                 emailid: emailid,
                                 password: password,
                                 username: username,
-                                codechef_handle: codechef,
-                                codeforces_handle: codeforces,
-                                hackerRank_handle: hackerrank,
-                                gitHub_handle: github,
+                                codechefHandle: codechef,
+                                codeforcesHandle: codeforces,
+                                hackerRankHandle: hackerrank,
+                                gitHubHandle: github,
                                 dp: image,
                                 aboutme: aboutMe,
                                 achievements: achievements,

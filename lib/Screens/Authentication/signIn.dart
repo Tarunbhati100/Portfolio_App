@@ -1,4 +1,4 @@
-import 'package:Portfolio/Screens/Authentication/HomeScreen.dart';
+import 'package:Portfolio/Screens/HomeScreen.dart';
 import 'package:Portfolio/Services/auth.dart';
 import 'package:Portfolio/Services/adManager.dart';
 import 'package:firebase_admob/firebase_admob.dart';
@@ -252,7 +252,7 @@ class _SignInState extends State<SignIn> {
                 ),
                 Container(
                   height: 150,
-                  child: SvgPicture.asset("./assets/lighthouse.svg"),
+                  child: SvgPicture.asset("./assets/images/lighthouse.svg"),
                 ),
                 SizedBox(
                   height: AdSize.banner.height + 10.0,

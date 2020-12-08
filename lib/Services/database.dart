@@ -11,10 +11,10 @@ class DatabaseServices {
     String id,
     String username,
     File dp,
-    String codechef_handle,
-    String codeforces_handle,
-    String hackerRank_handle,
-    String gitHub_handle,
+    String codechefHandle,
+    String codeforcesHandle,
+    String hackerRankHandle,
+    String gitHubHandle,
     String aboutme,
     String achievements,
     String dpUrl,
@@ -22,30 +22,24 @@ class DatabaseServices {
     String mobileNumber,
     String linkedIn,
   }) async {
-    final dpurl = (dp != null) ? await StorageRepo().uploadFile(dp) : dpUrl;
-    return await portfolioCollection.doc(id).set({
-      'Username': username ?? "",
-      'Codechef Handle': codechef_handle ?? "",
-      'Codeforces Handle': codeforces_handle ?? "",
-      'HackerRank Handle': hackerRank_handle ?? "",
-      'GitHub Handle': gitHub_handle ?? "",
-      'dpurl': dpurl ?? "",
-      'About Me': aboutme ?? "",
-      'Achievements': achievements ?? "",
-      'linkedIn': linkedIn ?? "",
-      'mobileNumber': mobileNumber ?? "",
-      'email': email ?? "",
-    });
-  }
-
-  List<Map<String, dynamic>> _snapshotList(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc) {
-      return doc.data();
-    }).toList();
-  }
-
-  Stream<List<Map<String, dynamic>>> get data {
-    return portfolioCollection.snapshots().map(_snapshotList);
+    try {
+      final dpurl = (dp != null) ? await StorageRepo().uploadFile(dp) : dpUrl;
+      return await portfolioCollection.doc(id).set({
+        'Username': username ?? "",
+        'Codechef Handle': codechefHandle ?? "",
+        'Codeforces Handle': codeforcesHandle ?? "",
+        'HackerRank Handle': hackerRankHandle ?? "",
+        'GitHub Handle': gitHubHandle ?? "",
+        'dpurl': dpurl ?? "",
+        'About Me': aboutme ?? "",
+        'Achievements': achievements ?? "",
+        'linkedIn': linkedIn ?? "",
+        'mobileNumber': mobileNumber ?? "",
+        'email': email ?? "",
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<List<Map<String, dynamic>>> get getdata async {
@@ -54,6 +48,7 @@ class DatabaseServices {
   }
 
   Future<User> getUser(String uid) async {
+    try{
     final doc = await portfolioCollection.doc(uid).get();
     return User(
       codeforces: doc.data()['Codeforces Handle'],
@@ -67,11 +62,15 @@ class DatabaseServices {
       linkedIn: doc.data()['linkedIn'],
       mobileNumber: doc.data()['mobileNumber'],
       email: doc.data()['email'],
-    );
+    );}catch(e){print(e);}
   }
 
   void deleteUserdata(String uid) {
-    portfolioCollection.doc(uid).delete();
-    StorageRepo().deleteStorageData(uid);
+    try {
+      portfolioCollection.doc(uid).delete();
+      StorageRepo().deleteStorageData(uid);
+    } catch (e) {
+      print(e);
+    }
   }
 }

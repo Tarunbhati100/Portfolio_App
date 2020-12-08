@@ -25,10 +25,10 @@ class AuthServices {
     String emailid,
     String password,
     String username,
-    String codechef_handle,
-    String codeforces_handle,
-    String hackerRank_handle,
-    String gitHub_handle,
+    String codechefHandle,
+    String codeforcesHandle,
+    String hackerRankHandle,
+    String gitHubHandle,
     String aboutme,
     String achievements,
     String email,
@@ -41,10 +41,10 @@ class AuthServices {
       await _database.updateUserData(
         id: result.user.uid,
         username: username,
-        codechef_handle: codechef_handle,
-        codeforces_handle: codeforces_handle,
-        hackerRank_handle: hackerRank_handle,
-        gitHub_handle: gitHub_handle,
+        codechefHandle: codechefHandle,
+        codeforcesHandle: codeforcesHandle,
+        hackerRankHandle: hackerRankHandle,
+        gitHubHandle: gitHubHandle,
         dp: dp,
         aboutme: aboutme,
         achievements: achievements,
@@ -79,8 +79,12 @@ class AuthServices {
   }
 
   void deleteUser() {
-    final user = _auth.currentUser;
-    _database.deleteUserdata(user.uid);
-    user.delete();
+    try {
+      final user = _auth.currentUser;
+      _database.deleteUserdata(user.uid);
+      user.delete();
+    } catch (e) {
+      print(e);
+    }
   }
 }

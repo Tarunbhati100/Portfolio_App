@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:Portfolio/Screens/Authentication/AuthScreen.dart';
-import 'package:Portfolio/Screens/Authentication/HomeScreen.dart';
+import 'package:Portfolio/Screens/HomeScreen.dart';
 import 'package:Portfolio/Services/database.dart';
 import 'package:Portfolio/Services/adManager.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -523,10 +523,10 @@ class _EditScreenState extends State<EditScreen> {
                               await _database.updateUserData(
                                   id: _auth.getCurrentUser().uid,
                                   username: widget.username,
-                                  codechef_handle: widget.codechef,
-                                  codeforces_handle: widget.codeforces,
-                                  hackerRank_handle: widget.hackerrank,
-                                  gitHub_handle: widget.github,
+                                  codechefHandle: widget.codechef,
+                                  codeforcesHandle: widget.codeforces,
+                                  hackerRankHandle: widget.hackerrank,
+                                  gitHubHandle: widget.github,
                                   dp: widget.image,
                                   aboutme: widget.aboutMe,
                                   achievements: widget.achievements,

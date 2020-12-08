@@ -122,13 +122,13 @@ class _HomeContentState extends State<HomeContent> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CircleAvatar(
-              radius: 103,
+              radius: MediaQuery.of(context).size.width * 0.65 / 2,
               backgroundColor: Colors.amber,
               child: ClipOval(
                 child: CachedNetworkImage(
                   fit: BoxFit.fill,
-                  height: 200,
-                  width: 200,
+                  height: MediaQuery.of(context).size.width * 0.6,
+                  width: MediaQuery.of(context).size.width * 0.6,
                   imageUrl: widget.user.dpUrl,
                   placeholder: (context, url) => CircularProgressIndicator(
                     backgroundColor: Colors.white,
@@ -141,17 +141,13 @@ class _HomeContentState extends State<HomeContent> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
             Container(
                 width: MediaQuery.of(context).size.width * 0.7,
-                height: 50,
+                height: 70,
                 child: FittedBox(
                   child: Text(widget.user.userName.toUpperCase(),
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
                           color: Colors.black,
                           decoration: TextDecoration.underline)),
                 )),
@@ -279,7 +275,7 @@ class AboutMeCard extends StatelessWidget {
         ? ToggleCard(
             isopen: isopen,
             toggleCallback: toggleCallback,
-            title: "AboutMe",
+            title: "About Me",
             leadingicon: Icon(
               Icons.notes,
               color: Colors.orange,
@@ -294,7 +290,7 @@ class AboutMeCard extends StatelessWidget {
                   ToggleCard(
                     isopen: isopen,
                     toggleCallback: toggleCallback,
-                    title: "AboutMe",
+                    title: "About Me",
                     leadingicon: Icon(
                       Icons.notes,
                       color: Colors.orange,
@@ -381,49 +377,81 @@ class ContactMeCard extends StatelessWidget {
                     children: [
                       user.mobileNumber == ""
                           ? SizedBox()
-                          : IconButton(
-                              iconSize:
-                                  MediaQuery.of(context).size.width * 0.15,
-                              icon: Icon(
-                                Icons.call_outlined,
-                                color: Colors.green,
-                              ),
-                              onPressed: () async {
-                                if (await canLaunch("tel:user.mobileNumber")) {
-                                  await launch("tel:${user.mobileNumber}");
-                                } else {
-                                  print(
-                                      'Could not launch ${user.mobileNumber}');
-                                }
-                              }),
+                          : Column(
+                              children: [
+                                IconButton(
+                                    iconSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.15,
+                                    icon: Icon(
+                                      Icons.call_outlined,
+                                      color: Colors.green,
+                                    ),
+                                    onPressed: () async {
+                                      if (await canLaunch(
+                                          "tel:user.mobileNumber")) {
+                                        await launch(
+                                            "tel:${user.mobileNumber}");
+                                      } else {
+                                        print(
+                                            'Could not launch ${user.mobileNumber}');
+                                      }
+                                    }),
+                                Text(
+                                  "Call",
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              ],
+                            ),
                       user.email == ""
                           ? SizedBox()
-                          : IconButton(
-                              iconSize:
-                                  MediaQuery.of(context).size.width * 0.15,
-                              icon: Icon(
-                                Icons.mail_outline,
-                                color: Colors.deepOrange[900],
-                              ),
-                              onPressed: () async {
-                                if (await canLaunch("mailto:${user.email}")) {
-                                  await launch("mailto:${user.email}");
-                                } else {
-                                  print('Could not launch ${user.email}');
-                                }
-                              }),
+                          : Column(
+                              children: [
+                                IconButton(
+                                    iconSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.15,
+                                    icon: Icon(
+                                      Icons.mail_outline,
+                                      color: Colors.deepOrange[900],
+                                    ),
+                                    onPressed: () async {
+                                      if (await canLaunch(
+                                          "mailto:${user.email}")) {
+                                        await launch("mailto:${user.email}");
+                                      } else {
+                                        print('Could not launch ${user.email}');
+                                      }
+                                    }),
+                                Text(
+                                  "Mail",
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              ],
+                            ),
                       user.linkedIn == ""
                           ? SizedBox()
-                          : IconButton(
-                              iconSize: MediaQuery.of(context).size.width * 0.2,
-                              icon: Image.asset("./assets/linkedin.png"),
-                              onPressed: () async {
-                                if (await canLaunch(user.linkedIn)) {
-                                  await launch(user.linkedIn);
-                                } else {
-                                  print('Could not launch ${user.linkedIn}');
-                                }
-                              }),
+                          : Column(
+                              children: [
+                                IconButton(
+                                    iconSize:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    icon: Image.asset(
+                                        "./assets/images/linkedin.png"),
+                                    onPressed: () async {
+                                      if (await canLaunch(user.linkedIn)) {
+                                        await launch(user.linkedIn);
+                                      } else {
+                                        print(
+                                            'Could not launch ${user.linkedIn}');
+                                      }
+                                    }),
+                                Text(
+                                  "LinkedIn",
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              ],
+                            ),
                     ],
                   ),
                   Divider(
@@ -476,6 +504,7 @@ class HackerRankCard extends StatelessWidget {
                           color: Colors.orange,
                         ),
                       ),
+                      Divider(color: Colors.white),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -511,9 +540,10 @@ class HackerRankCard extends StatelessWidget {
                             child: CachedNetworkImage(
                               height: 150,
                               imageUrl: hackerrank.imageurl,
-                              placeholder: (context, url) =>
-                                  LinearProgressIndicator(
-                                backgroundColor: Colors.amber,
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(
+                                  backgroundColor: Colors.amber,
+                                ),
                               ),
                               errorWidget: (context, url, error) => Icon(
                                 Icons.account_box,
@@ -622,6 +652,7 @@ class CodechefCard extends StatelessWidget {
                           color: Colors.orange,
                         ),
                       ),
+                      Divider(color: Colors.white),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -680,9 +711,10 @@ class CodechefCard extends StatelessWidget {
                             child: CachedNetworkImage(
                               height: 150,
                               imageUrl: codechef.imageurl,
-                              placeholder: (context, url) =>
-                                  LinearProgressIndicator(
-                                backgroundColor: Colors.amber,
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(
+                                  backgroundColor: Colors.amber,
+                                ),
                               ),
                               errorWidget: (context, url, error) => Icon(
                                 Icons.account_box,
@@ -739,6 +771,9 @@ class GitHubCard extends StatelessWidget {
                       color: Colors.orange,
                     ),
                   ),
+                  Divider(
+                    color: Colors.white,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -790,9 +825,10 @@ class GitHubCard extends StatelessWidget {
                         child: CachedNetworkImage(
                           height: 150,
                           imageUrl: gitHub.imgurl,
-                          placeholder: (context, url) =>
-                              LinearProgressIndicator(
-                            backgroundColor: Colors.amber,
+                          placeholder: (context, url) => Center(
+                            child: CircularProgressIndicator(
+                              backgroundColor: Colors.amber,
+                            ),
                           ),
                           errorWidget: (context, url, error) => Icon(
                             Icons.account_box,
@@ -847,6 +883,9 @@ class CodeforcesCard extends StatelessWidget {
                         color: Colors.orange,
                       ),
                     ),
+                    Divider(
+                      color: Colors.white,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -866,67 +905,72 @@ class CodeforcesCard extends StatelessWidget {
                                           color: Colors.white),
                                     ),
                                   ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Flexible(
-                                        flex: 1,
-                                        child: Column(
-                                          children: [
-                                            FittedBox(
-                                              child: Text(
-                                                'Max. Rank',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.red),
-                                              ),
-                                            ),
-                                            Text(
-                                              codeforces.maxrank,
-                                              style: TextStyle(
-                                                  color: codeforces.maxcolor),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Text(
-                                              codeforces.maxrating.toString(),
-                                              style: TextStyle(
-                                                  color: codeforces.maxcolor),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        color: Colors.black,
-                                        width: 2,
-                                        height: 100,
-                                      ),
-                                      Flexible(
-                                        flex: 1,
-                                        child: Column(
-                                          children: [
-                                            FittedBox(
-                                              child: Text('Current Rank',
+                                  IntrinsicHeight(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Flexible(
+                                          flex: 1,
+                                          child: Column(
+                                            children: [
+                                              FittedBox(
+                                                child: Text(
+                                                  'Max. Rank',
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      color: Colors.blue)),
-                                            ),
-                                            Text(
-                                              codeforces.rank,
-                                              style: TextStyle(
-                                                  color: codeforces.currcolor),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Text(
-                                              codeforces.currrating.toString(),
-                                              style: TextStyle(
-                                                  color: codeforces.currcolor),
-                                            ),
-                                          ],
+                                                      color: Colors.red),
+                                                ),
+                                              ),
+                                              Text(
+                                                codeforces.maxrank,
+                                                style: TextStyle(
+                                                    color: codeforces.maxcolor),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              Text(
+                                                codeforces.maxrating.toString(),
+                                                style: TextStyle(
+                                                    color: codeforces.maxcolor),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                        VerticalDivider(
+                                          color: Colors.white,
+                                          thickness: 2,
+                                        ),
+                                        Flexible(
+                                          flex: 1,
+                                          child: Column(
+                                            children: [
+                                              FittedBox(
+                                                child: Text('Current Rank',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.blue)),
+                                              ),
+                                              Text(
+                                                codeforces.rank,
+                                                style: TextStyle(
+                                                    color:
+                                                        codeforces.currcolor),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              Text(
+                                                codeforces.currrating
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    color:
+                                                        codeforces.currcolor),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   FittedBox(
                                     child: Text(
@@ -945,9 +989,11 @@ class CodeforcesCard extends StatelessWidget {
                           child: CachedNetworkImage(
                             height: 200,
                             imageUrl: "https:" + codeforces.imgurl,
-                            placeholder: (context, url) =>
-                                LinearProgressIndicator(
-                                    backgroundColor: Colors.amber),
+                            placeholder: (context, url) => Center(
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.amber,
+                              ),
+                            ),
                             errorWidget: (context, url, error) => Icon(
                               Icons.account_box,
                               color: Colors.white,

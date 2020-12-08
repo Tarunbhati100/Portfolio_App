@@ -8,6 +8,7 @@ class HackerRankServices {
   HackerRankServices({this.handle});
 
   Future<HackerRank> getInfo() async {
+    try{
     if (handle != "") {
       final http.Response response =
           await http.get("https://www.hackerrank.com/$handle");
@@ -44,6 +45,8 @@ class HackerRankServices {
       } else {
         print(response.statusCode);
       }
+    }}catch(e){
+      print(e);
     }
   }
 }

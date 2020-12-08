@@ -8,21 +8,25 @@ class CodeforesServices {
   CodeforesServices({this.handle});
 
   Future<Codeforces> getInfo() async {
-    final http.Response response =
-        await http.get("https://codeforces.com/api/user.info?handles=$handle");
-    if (response.statusCode == 200) {
-      final data = response.body;
-      final decodedData = jsonDecode(data)['result'][0];
-      return Codeforces(
-        handle: decodedData['handle'],
-        rank: decodedData['rank'],
-        maxrating: decodedData['maxRating'],
-        maxrank: decodedData['maxRank'],
-        imgurl: decodedData['titlePhoto'],
-        currrating: decodedData['rating'],
-      );
-    } else {
-      print(response.statusCode);
+    try {
+      final http.Response response = await http
+          .get("https://codeforces.com/api/user.info?handles=$handle");
+      if (response.statusCode == 200) {
+        final data = response.body;
+        final decodedData = jsonDecode(data)['result'][0];
+        return Codeforces(
+          handle: decodedData['handle'],
+          rank: decodedData['rank'],
+          maxrating: decodedData['maxRating'],
+          maxrank: decodedData['maxRank'],
+          imgurl: decodedData['titlePhoto'],
+          currrating: decodedData['rating'],
+        );
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }

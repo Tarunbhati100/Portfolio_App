@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(fontFamily: 'PatrickHand',),
         home: StreamProvider<firebase.User>.value(
             value: AuthServices().user,
             child: SafeArea(

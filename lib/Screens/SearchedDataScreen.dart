@@ -1,4 +1,4 @@
-import 'package:Portfolio/Screens/HomeContent.dart';
+import 'HomeContent.dart';
 import 'package:Portfolio/Screens/SearchScreen.dart';
 import 'package:Portfolio/Services/codechef.dart';
 import 'package:Portfolio/Services/codeforces.dart';
