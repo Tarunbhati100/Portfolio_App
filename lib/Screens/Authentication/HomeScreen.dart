@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.white,
         brightness: Brightness.light,
         leading: IconButton(
-          iconSize: 50,
+          // iconSize: 50,
           icon: Icon(
             Icons.edit,
             color: Colors.amber[800],
@@ -74,6 +74,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       codechef: user.codechef,
                       aboutMe: user.aboutme,
                       dpurl: user.dpUrl,
+                      email: user.email,
+                      linkedIn: user.linkedIn,
+                      mobilenumber: user.mobileNumber,
                     )));
           },
         ),
@@ -82,10 +85,10 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            iconSize: 50,
+            // iconSize: 50,
             icon: Icon(
               Icons.exit_to_app,
-              color: Colors.red,
+              color: Colors.blue,
             ),
             onPressed: () {
               _auth.signOut();

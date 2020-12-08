@@ -18,7 +18,7 @@ class DatabaseServices {
     String aboutme,
     String achievements,
     String dpUrl,
-    String gmail,
+    String email,
     String mobileNumber,
     String linkedIn,
   }) async {
@@ -34,7 +34,7 @@ class DatabaseServices {
       'Achievements': achievements ?? "",
       'linkedIn': linkedIn ?? "",
       'mobileNumber': mobileNumber ?? "",
-      'gmail': gmail ?? "",
+      'email': email ?? "",
     });
   }
 
@@ -66,7 +66,7 @@ class DatabaseServices {
       achievements: doc.data()['Achievements'],
       linkedIn: doc.data()['linkedIn'],
       mobileNumber: doc.data()['mobileNumber'],
-      gmail: doc.data()['gmail'],
+      email: doc.data()['email'],
     );
   }
 

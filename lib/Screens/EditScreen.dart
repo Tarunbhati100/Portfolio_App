@@ -22,7 +22,7 @@ class EditScreen extends StatefulWidget {
   String aboutMe;
   String achievements;
   File image;
-  String gmail;
+  String email;
   String mobilenumber;
   String linkedIn;
   EditScreen({
@@ -34,7 +34,7 @@ class EditScreen extends StatefulWidget {
     this.username,
     this.achievements,
     this.aboutMe,
-    this.gmail,
+    this.email,
     this.mobilenumber,
     this.linkedIn,
   }) {
@@ -442,24 +442,28 @@ class _EditScreenState extends State<EditScreen> {
                         height: 10,
                       ),
                       TextFormField(
-                        initialValue: widget.gmail,
+                        initialValue: widget.email,
                         decoration: InputDecoration(
-                          hintText: "Gmail Account",
-                          labelText: "Gmail Account",
+                          hintText: "Email Address",
+                          labelText: "Email Address",
                           alignLabelWithHint: true,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                         ),
                         validator: (val) {
-                          if (!val.contains("@gmail.com")) {
-                            return "Please provide a valid Gmail Account.";
+                          if ((!val.contains("@") || !val.contains(".")) &&
+                              val != "") {
+                            return "Please provide a valid Email AAdress.";
                           }
                           return null;
                         },
                         onChanged: (val) {
-                          widget.gmail = val;
+                          widget.email = val;
                         },
+                      ),
+                      SizedBox(
+                        height: 10,
                       ),
                       TextFormField(
                         initialValue: widget.linkedIn,
@@ -474,22 +478,15 @@ class _EditScreenState extends State<EditScreen> {
                         onChanged: (val) {
                           widget.linkedIn = val;
                         },
-                        validator: (val) {
-                          var urlPattern =
-                              r"(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
-                          RegExp regExp = new RegExp(urlPattern);
-                          if (!regExp.hasMatch(val)) {
-                            return 'Please enter valid Url';
-                          }
-                          return null;
-                        },
+                      ),
+                      SizedBox(
+                        height: 10,
                       ),
                       TextFormField(
                         initialValue: widget.mobilenumber,
                         decoration: InputDecoration(
                           hintText: "Moblie Number",
-                          labelText:
-                              "Plz Provide Mobile Number with Country Code.",
+                          labelText: "Moblie Number",
                           alignLabelWithHint: true,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -498,7 +495,7 @@ class _EditScreenState extends State<EditScreen> {
                         validator: (val) {
                           String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
                           RegExp regExp = new RegExp(pattern);
-                          if (!regExp.hasMatch(val)) {
+                          if (!regExp.hasMatch(val) && val != "") {
                             return 'Please enter valid mobile number';
                           }
                           return null;
@@ -506,6 +503,9 @@ class _EditScreenState extends State<EditScreen> {
                         onChanged: (val) {
                           widget.mobilenumber = val;
                         },
+                      ),
+                      SizedBox(
+                        height: 10,
                       ),
                       RaisedButton(
                         shape: RoundedRectangleBorder(
@@ -531,7 +531,7 @@ class _EditScreenState extends State<EditScreen> {
                                   aboutme: widget.aboutMe,
                                   achievements: widget.achievements,
                                   dpUrl: widget.dpurl,
-                                  gmail: widget.gmail,
+                                  email: widget.email,
                                   linkedIn: widget.linkedIn,
                                   mobileNumber: widget.mobilenumber);
                               Navigator.of(context).pushReplacement(

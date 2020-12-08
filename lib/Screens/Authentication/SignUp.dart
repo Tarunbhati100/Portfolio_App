@@ -36,7 +36,7 @@ class _SignUpState extends State<SignUp> {
   InterstitialAd _interstitialAd;
   bool _usernameavailable = true;
   bool _isInterstitialAdReady;
-  String gmail;
+  String email;
   String mobilenumber;
   String linkedIn;
   void _loadInterstitialAd() {
@@ -454,21 +454,22 @@ class _SignUpState extends State<SignUp> {
                       ),
                       TextFormField(
                         decoration: InputDecoration(
-                          hintText: "Gmail Account",
-                          labelText: "Gmail Account",
+                          hintText: "Email Address",
+                          labelText: "Email Address",
                           alignLabelWithHint: true,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                         ),
                         validator: (val) {
-                          if (!val.contains("@gmail.com")) {
-                            return "Please provide a valid Gmail Account.";
+                          if ((!val.contains("@") || !val.contains(".")) &&
+                              val != "") {
+                            return "Please provide a valid Email Address.";
                           }
                           return null;
                         },
                         onChanged: (val) {
-                          gmail = val;
+                          email = val;
                         },
                       ),
                       SizedBox(
@@ -485,15 +486,6 @@ class _SignUpState extends State<SignUp> {
                         ),
                         onChanged: (val) {
                           linkedIn = val;
-                        },
-                        validator: (val) {
-                          var urlPattern =
-                              r"(https?|http)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
-                          RegExp regExp = new RegExp(urlPattern);
-                          if (!regExp.hasMatch(val)) {
-                            return 'Please enter valid Url';
-                          }
-                          return null;
                         },
                       ),
                       SizedBox(
@@ -512,7 +504,7 @@ class _SignUpState extends State<SignUp> {
                         validator: (val) {
                           String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
                           RegExp regExp = new RegExp(pattern);
-                          if (!regExp.hasMatch(val)) {
+                          if (!regExp.hasMatch(val) && val != "") {
                             return 'Please enter valid mobile number';
                           }
                           return null;
@@ -539,7 +531,7 @@ class _SignUpState extends State<SignUp> {
                               }
                               final newUser =
                                   await _auth.registerWithEmailAndPassword(
-                                email: emailid,
+                                emailid: emailid,
                                 password: password,
                                 username: username,
                                 codechef_handle: codechef,
@@ -549,7 +541,7 @@ class _SignUpState extends State<SignUp> {
                                 dp: image,
                                 aboutme: aboutMe,
                                 achievements: achievements,
-                                gmail: gmail,
+                                email: email,
                                 linkedIn: linkedIn,
                                 mobileNumber: mobilenumber,
                               );

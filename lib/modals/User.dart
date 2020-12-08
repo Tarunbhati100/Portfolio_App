@@ -7,7 +7,7 @@ class User {
   String dpUrl;
   String aboutme;
   String achievements;
-  String gmail;
+  String email;
   String mobileNumber;
   String linkedIn;
 
@@ -20,7 +20,7 @@ class User {
       this.dpUrl,
       this.aboutme,
       this.achievements,
-      this.gmail,
+      this.email,
       this.linkedIn,
       this.mobileNumber});
 }

@@ -22,7 +22,7 @@ class AuthServices {
 
   Future registerWithEmailAndPassword({
     File dp,
-    String email,
+    String emailid,
     String password,
     String username,
     String codechef_handle,
@@ -31,13 +31,13 @@ class AuthServices {
     String gitHub_handle,
     String aboutme,
     String achievements,
-    String gmail,
+    String email,
     String mobileNumber,
     String linkedIn,
   }) async {
     try {
       final result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+          email: emailid, password: password);
       await _database.updateUserData(
         id: result.user.uid,
         username: username,
@@ -50,7 +50,7 @@ class AuthServices {
         achievements: achievements,
         linkedIn: linkedIn,
         mobileNumber: mobileNumber,
-        gmail: gmail,
+        email: email,
       );
       return result;
     } catch (error) {
