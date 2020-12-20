@@ -191,34 +191,36 @@ class _SignInState extends State<SignIn> {
                             borderRadius: BorderRadius.circular(10)),
                         color: Colors.yellow,
                         onPressed: () async {
-                          if(_formkey.currentState.validate()){
-                          setState(() {
-                            isloading = true;
-                          });
-                          try {
-                            if (_isInterstitialAdReady) {
-                              _interstitialAd.show();
-                            }
-                            final newUser = await _auth
-                                .signInWithEmailAndPassword(emailid, password);
-                            if (newUser != null) {
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) => HomeScreen()));
-                            }
-                          } catch (e) {
-                            Flushbar(
-                              icon:
-                                  Icon(Icons.error_outline, color: Colors.red),
-                              flushbarPosition: FlushbarPosition.TOP,
-                              message: e.message,
-                              duration: Duration(seconds: 3),
-                            ).show(context);
-                          } finally {
+                          if (_formkey.currentState.validate()) {
                             setState(() {
-                              isloading = false;
+                              isloading = true;
                             });
-                          }
+                            try {
+                              if (_isInterstitialAdReady) {
+                                _interstitialAd.show();
+                              }
+                              final newUser =
+                                  await _auth.signInWithEmailAndPassword(
+                                      emailid, password);
+                              if (newUser != null) {
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) => HomeScreen()));
+                                        _bannerAd?.dispose();
+                              }
+                            } catch (e) {
+                              Flushbar(
+                                icon: Icon(Icons.error_outline,
+                                    color: Colors.red),
+                                flushbarPosition: FlushbarPosition.TOP,
+                                message: e.message,
+                                duration: Duration(seconds: 3),
+                              ).show(context);
+                            } finally {
+                              setState(() {
+                                isloading = false;
+                              });
+                            }
                           }
                         },
                         child: Text(

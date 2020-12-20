@@ -129,7 +129,7 @@ class _HomeContentState extends State<HomeContent> {
                   fit: BoxFit.fill,
                   height: MediaQuery.of(context).size.width * 0.6,
                   width: MediaQuery.of(context).size.width * 0.6,
-                  imageUrl: widget.user.dpUrl,
+                  imageUrl: widget.user.dpUrl??"",
                   placeholder: (context, url) => CircularProgressIndicator(
                     backgroundColor: Colors.white,
                   ),
@@ -329,7 +329,7 @@ class ContactMeCard extends StatelessWidget {
         ? ToggleCard(
             isopen: isopen,
             toggleCallback: toggleCallback,
-            title: "ContactMe",
+            title: "Contact Me",
             leadingicon: Icon(
               Icons.call,
               color: Colors.orange,
@@ -348,13 +348,13 @@ class ContactMeCard extends StatelessWidget {
                         Row(
                           children: [
                             Icon(
-                              Icons.account_circle,
+                              Icons.call,
                               color: Colors.orange,
                             ),
                             SizedBox(
                               width: 5,
                             ),
-                            Text("ContactMe",
+                            Text("Contact Me",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,

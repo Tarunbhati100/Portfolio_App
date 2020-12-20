@@ -176,6 +176,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                   dpUrl: data[index]['dpurl'],
                                   aboutme: data[index]['About Me'],
                                   achievements: data[index]['Achievements'],
+                                  linkedIn: data[index]['linkedIn'],
+                                  mobileNumber: data[index]['mobileNumber'],
+                                  email: data[index]['email'],
                                 ),
                               );
                             }));
@@ -188,7 +191,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 );
               })),
               SizedBox(
-                height: 50,
+                height: AdSize.banner.height + 10.0,
               )
             ],
           ),

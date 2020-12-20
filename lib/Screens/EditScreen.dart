@@ -234,7 +234,7 @@ class _EditScreenState extends State<EditScreen> {
                                   fit: BoxFit.fill,
                                   height: 200,
                                   width: 200,
-                                  imageUrl: widget.dpurl,
+                                  imageUrl: widget.dpurl??"",
                                   placeholder: (context, url) =>
                                       CircularProgressIndicator(
                                     backgroundColor: Colors.white,
